@@ -1,3 +1,5 @@
 App/node_modules
 .git
 .idea
+App/.expo
+package-lock.json
