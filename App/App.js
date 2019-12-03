@@ -1,26 +1,18 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
-import { Header, Input, Button } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {StyleSheet, Text, View, Image, SafeAreaView, Platform, StatusBar} from 'react-native';
+import { FormAcc } from './view/Newacc.js';
+// import { GlobalStyles } from './style/GlobalStyles.js';
 
 export default function App() {
-  return (
-
-      <View>
-          <Header
-              leftComponent={{ icon: 'menu', color: '#fff' }}
-              centerComponent={{ text: 'MY TITLE', style: { color: '#fff' } }}
-              rightComponent={{ icon: 'home', color: '#fff' }}
-          />
-      </View>
+    return (
+        <SafeAreaView style={styles.droidSafeArea}>
+            <FormAcc/>
+        </SafeAreaView>
     );
 }
-//Test
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+    droidSafeArea: {
+        flex: 1,
+        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
+    },
 });
