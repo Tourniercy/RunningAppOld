@@ -12,7 +12,7 @@ export default function App() {
 }
 const styles = StyleSheet.create({
     droidSafeArea: {
-        flex: 1,
+        flex: 6,
         paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
     },
 });
