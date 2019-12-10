@@ -1,18 +1,26 @@
-import React from 'react';
-import {StyleSheet, Text, View, Image, SafeAreaView, Platform, StatusBar} from 'react-native';
-import { FormAcc } from './view/Newacc.js';
-// import { GlobalStyles } from './style/GlobalStyles.js';
+// App.js
 
-export default function App() {
-    return (
-        <SafeAreaView style={styles.droidSafeArea}>
-            <FormAcc/>
-        </SafeAreaView>
-    );
+import React, { Component } from 'react';
+import {Platform, StatusBar, StyleSheet, SafeAreaView} from 'react-native';
+import { createStackNavigator } from 'react-navigation-stack';
+import Container from './Navigation';
+import Home from './view/Home';
+
+export default class YourApp extends Component {
+    render() {
+        return (
+            <SafeAreaView style={styles.droidSafeArea}>
+                <Container />
+            </SafeAreaView>
+
+        );
+    }
 }
 const styles = StyleSheet.create({
     droidSafeArea: {
-        flex: 6,
+        flex: 1,
         paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
     },
 });
+
+
