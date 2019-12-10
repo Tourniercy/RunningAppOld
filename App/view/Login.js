@@ -1,8 +1,6 @@
 import React,{Component} from 'react';
 import {View, Image, StyleSheet,TextInput,KeyboardAvoidingView} from 'react-native';
-import { Header } from 'react-navigation-stack';
 import { Input,Button,Text } from 'react-native-elements';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 export class Login extends Component {
 
@@ -13,7 +11,8 @@ export class Login extends Component {
     handleEmail = (text) => {
         this.setState({ email: text })
     }
-    handlePassword = (text) => {
+
+    handlePassword = async (text) => {
         this.setState({ password: text })
     }
 

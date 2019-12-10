@@ -1,7 +1,7 @@
 // View if you forget your password
 
 import React,{Component} from 'react';
-import {StyleSheet, View, Text, TextInput} from 'react-native'
+import {StyleSheet, View, Text, TextInput, KeyboardAvoidingView} from 'react-native'
 
 class ForgotPassword extends Component {
 
@@ -16,15 +16,17 @@ class ForgotPassword extends Component {
     render() {
         const { navigation } = this.props;
         return (
-            <View style={styles.main_container}>
-                <Text style={styles.text}>Entrez votre adresse mail, et vous recevrez un mail vous permettant de changer votre mot de passe.</Text>
-                <TextInput
-                    placeholder="Email"
-                    onChangeText={this.handleEmail}
-                    style={styles.textInput}
-
-                />
-            </View>
+            <KeyboardAvoidingView style={styles.keyboard}
+            behavior={"position"} enabled>
+                <View>
+                    <Text style={styles.text}>Entrez votre adresse mail, et vous recevrez un mail vous permettant de changer votre mot de passe.</Text>
+                    <TextInput
+                        placeholder="Email"
+                        onChangeText={this.handleEmail}
+                        style={styles.textInput}
+                    />
+                </View>
+            </KeyboardAvoidingView>
         )
     }
 }
@@ -32,15 +34,17 @@ class ForgotPassword extends Component {
 const styles = StyleSheet.create({
     main_container: {
         flex: 1,
-        alignContent: 'center'
+        alignContent: 'center',
+        paddingTop: 75
     },
     text: {
+        marginTop: 125,
         textAlign: 'center',
         fontSize: 30
     },
     textInput: {
         width : 300,
-        marginTop:25,
+        marginTop:50,
         margin: 25,
         alignSelf: 'stretch',
         padding: 7,
