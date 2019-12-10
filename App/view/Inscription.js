@@ -9,19 +9,42 @@ export class Inscription extends Component {
         super(props);
         this.state = {
             /*Initial State and Colour*/
-            iconColour : "black"
+            iconColourH : "black",
+            iconColourF : "black"
         }
     }
-    func() {
-
+    funcF() {
         console.warn("changed")
-        this.setState({
-            iconColour : "#2C5077"
+        if (this.state.iconColourF !== '#2C5077'){
+            this.setState({
+                iconColourF : "#2C5077",
+                iconColourH : "black"
+            })
+        } else {
+            this.setState({
+                iconColourF : "black"
+            })
+        }
 
-        })
+    }
+    funcH() {
+        console.warn("changed")
+        if (this.state.iconColourH !== '#2C5077'){
+            this.setState({
+                iconColourH : "#2C5077",
+                iconColourF : "black"
+            })
+        } else {
+            this.setState({
+                iconColourH : "black"
+            })
+        }
+
     }
     render() {
         return (
+            <KeyboardAvoidingView contentContainerStyle={styles.keyboard}
+                                  behavior={"position"} enabled>
             <ScrollView>
             <View style={styles.view}>
                 <ImageBackground
@@ -84,13 +107,13 @@ export class Inscription extends Component {
                             onBlur={handleBlur('email')}
                             placeholder={'Verification mot de passe'}
                         />
-                        <View style={{ flexDirection: 'row'}}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'center', flex: 1}}>
                         <Icon
                             raised
                             name='male'
                             type='font-awesome'
-                            color='black'
-                            onPress={()=>this.func()} />
+                            color={this.state.iconColourH}
+                            onPress={()=>this.funcH()} />
                             <Text
                                 style={{
                                     fontSize : 20,
@@ -106,8 +129,8 @@ export class Inscription extends Component {
                             raised
                             name='female'
                             type='font-awesome'
-                            color={this.state.iconColour}
-                            onPress={()=>this.func()} />
+                            color={this.state.iconColourF}
+                            onPress={()=>this.funcF()} />
 
                         </View>
                         <TextInput
@@ -145,6 +168,7 @@ export class Inscription extends Component {
             </Formik>
             </View>
             </ScrollView>
+            </KeyboardAvoidingView>
         );
     }
 }
@@ -169,6 +193,9 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,     // Add this to specify bottom border thickness
         fontSize: 20
     },
+    keyboard: {
+        marginBottom : 50
+    }
 
 
 });
