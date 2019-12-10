@@ -4,6 +4,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 import LoginScreen from './view/Login';
 import HomeScreen from './view/Home';
 import InscriptionScreen from './view/Inscription';
+import ForgotPasswordScreen from './view/ForgotPassword';
 
 const NavigationStack = createStackNavigator({
     Login: {
@@ -18,12 +19,18 @@ const NavigationStack = createStackNavigator({
             header: null,
         },
     },
-        Inscription: {
-            screen: InscriptionScreen,
-            navigationOptions: {
-                header: null,
-            },
+    Inscription: {
+        screen: InscriptionScreen,
+        navigationOptions: {
+            header: null,
         },
+    },
+    ForgotPassword: {
+        screen: ForgotPasswordScreen,
+        navigationOptions: {
+            header: null
+        }
+    }
 }
 );
 

@@ -43,7 +43,14 @@ export class Login extends Component {
 
                                 />
                             </View>
-                    <Text style={{marginTop: 30,fontSize:15,color: '#2C5077',textAlign:'right',alignSelf: 'stretch'}}>Mot de passe oublié ?</Text>
+                    <Text style={{marginTop: 30,fontSize:15,color: '#2C5077',textAlign:'right',alignSelf: 'stretch'}}
+                          onPress={() => {
+                              this.props.navigation.navigate('ForgotPassword', {
+                                  Login: 'Cyril'
+                              });
+                          }}>
+                        Mot de passe oublié ?
+                    </Text>
                 </KeyboardAvoidingView>
 
                 <View style={{ flexDirection: 'row',position:'absolute',bottom:60 }}>
