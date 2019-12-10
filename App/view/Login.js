@@ -25,11 +25,11 @@ export class Login extends Component {
                 <KeyboardAvoidingView style={{paddingBottom: 50}}
                 behavior="position" enabled>
                     <Image
-                        style={{width: 100, height: 100}}
+                        style={{alignSelf: 'center', width: 100, height: 100}}
                         source={require('../src/img/Logo.png')}
                     />
-                    <Text style={{fontSize:40, marginTop: 20,color: '#2C5077',letterSpacing:7}}>RUNNING</Text>
-                    <View style={{marginTop:30,marginBottom:30}}>
+                    <Text style={{alignSelf: 'center', fontSize:40, marginTop: 20,color: '#2C5077',letterSpacing:7}}>RUNNING</Text>
+                    <View>
                                 <TextInput
                                     placeholder="Email"
                                     onChangeText={this.handleEmail}
@@ -43,8 +43,9 @@ export class Login extends Component {
 
                                 />
                             </View>
+                    <Text style={{marginTop: 30,fontSize:15,color: '#2C5077',textAlign:'right',alignSelf: 'stretch'}}>Mot de passe oublié ?</Text>
                 </KeyboardAvoidingView>
-                <Text style={{fontSize:15,color: '#2C5077',textAlign:'right',alignSelf: 'stretch'}}>Mot de passe oublié ?</Text>
+
                 <View style={{ flexDirection: 'row',position:'absolute',bottom:60 }}>
                     <View style={{marginRight:30}}>
                 <Button
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
         paddingRight:40
     },
     textInput: {
-        width : 350,
+        width : 300,
         marginTop:25,
         alignItems: 'center',
         alignSelf: 'stretch',
@@ -104,7 +105,6 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,     // Add this to specify bottom border thickness
         fontSize: 20
     },
-
 
 });
 
