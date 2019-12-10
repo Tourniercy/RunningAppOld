@@ -63,7 +63,7 @@ export class Login extends Component {
                     type="outline"
                     //onPress={() => this.props.navigation.navigate('Home')}
                     onPress={() => {
-                        this.props.navigation.navigate('Home', {
+                        this.props.navigation.navigate('Inscription', {
                             Login: 'Cyril',
                             Password: 'TEST',
                         });
