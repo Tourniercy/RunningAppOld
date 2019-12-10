@@ -2,6 +2,7 @@ import React,{Component} from 'react';
 import {View, Image, StyleSheet,TextInput,KeyboardAvoidingView} from 'react-native';
 import { Header } from 'react-navigation-stack';
 import { Input,Button,Text } from 'react-native-elements';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 export class Login extends Component {
 
@@ -20,25 +21,29 @@ export class Login extends Component {
     render() {
         return (
             <View style={styles.view}>
-                <Image
-                    style={{width: 100, height: 100}}
-                    source={require('../src/img/Logo.png')}
-                />
-                <Text style={{fontSize:40, marginTop: 20,color: '#2C5077',letterSpacing:7}}>RUNNING</Text>
-                <View style={{marginTop:30,marginBottom:30}}>
-                            <TextInput
-                                placeholder="Email"
-                                onChangeText={this.handleEmail}
-                                style={styles.textInput}
 
-                            />
-                            <TextInput
-                                placeholder="Mot de passe"
-                                onChangeText={this.handlePassword}
-                                style={styles.textInput}
+                <KeyboardAvoidingView style={{paddingBottom: 50}}
+                behavior="position" enabled>
+                    <Image
+                        style={{width: 100, height: 100}}
+                        source={require('../src/img/Logo.png')}
+                    />
+                    <Text style={{fontSize:40, marginTop: 20,color: '#2C5077',letterSpacing:7}}>RUNNING</Text>
+                    <View style={{marginTop:30,marginBottom:30}}>
+                                <TextInput
+                                    placeholder="Email"
+                                    onChangeText={this.handleEmail}
+                                    style={styles.textInput}
 
-                            />
-                        </View>
+                                />
+                                <TextInput
+                                    placeholder="Mot de passe"
+                                    onChangeText={this.handlePassword}
+                                    style={styles.textInput}
+
+                                />
+                            </View>
+                </KeyboardAvoidingView>
                 <Text style={{fontSize:15,color: '#2C5077',textAlign:'right',alignSelf: 'stretch'}}>Mot de passe oublié ?</Text>
                 <View style={{ flexDirection: 'row',position:'absolute',bottom:60 }}>
                     <View style={{marginRight:30}}>
