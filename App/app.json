@@ -3,7 +3,7 @@
     "name": "RunningApp",
     "slug": "RunningApp",
     "privacy": "public",
-    "sdkVersion": "35.0.0",
+    "sdkVersion": "36.0.0",
     "platforms": [
       "ios",
       "android",
@@ -28,7 +28,9 @@
     },
     "android": {
       "config": {
-        "googleMaps": { "apiKey": "AIzaSyBxhdlP6HfsnBJ0UOG13Oh1zpNEzj7uyis" }
+        "googleMaps": {
+          "apiKey": "AIzaSyBxhdlP6HfsnBJ0UOG13Oh1zpNEzj7uyis"
+        }
       },
       "permissions": [
         "ACCESS_COARSE_LOCATION",
