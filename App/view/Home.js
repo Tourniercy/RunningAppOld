@@ -2,6 +2,8 @@
 import { Text, View } from 'react-native';
 import React, { Component } from 'react';
 import MapView from "react-native-maps";
+import * as geolib from 'geolib';
+
 
 
 export default class App extends Component {
@@ -14,6 +16,7 @@ export default class App extends Component {
             error: null,
             prevLatitude: null,
             prevLongitude: null,
+            distance: null
         };
     }
 
@@ -23,10 +26,26 @@ export default class App extends Component {
                 this.setState({
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude,
-                    prevLatitude : position.coords.latitude,
-                    prevLongitude : position.coords.longitude,
                     error: null,
                 });
+                if (this.state.prevLatitude) {
+                    console.log(position.coords);
+                    this.setState({
+                        distance:  geolib.getDistance({latitude :this.state.prevLatitude, longitude : this.state.prevLongitude}, {
+                                latitude: position.coords.latitude,
+                                longitude: position.coords.longitude,
+                            }),
+                        prevLatitude : position.coords.latitude,
+                        prevLongitude : position.coords.longitude,
+                    });
+                    console.log(this.state.distance);
+                } else {
+                    this.setState({
+                        prevLatitude : position.coords.latitude,
+                        prevLongitude : position.coords.longitude,
+                    })
+                }
+
             },
             (error) => this.setState({ error: error.message }),
             { enableHighAccuracy: true, timeout: 20000, maximumAge: 0, distanceFilter: 1},
@@ -42,11 +61,13 @@ export default class App extends Component {
         let text = 'Waiting..';
         let latitude = 0;
         let longitude = 0;
+        let distance = 0;
         if (this.state.error) {
             text = this.state.error;
         } else if (this.state.latitude) {
             latitude = (this.state.latitude);
             longitude = (this.state.longitude);
+            distance = (this.state.distance);
         }
         return (
             <View style={{flex:1}}>
@@ -68,6 +89,7 @@ export default class App extends Component {
                         description={"description"}
                     />
                 </MapView>
+                <Text>{distance}</Text>
             </View>
         );
     }
