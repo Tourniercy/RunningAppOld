@@ -14,7 +14,6 @@ export class Inscription extends Component {
         }
     }
     funcF() {
-        console.warn("changed")
         if (this.state.iconColourF !== '#2C5077'){
             this.setState({
                 iconColourF : "#2C5077",
@@ -28,7 +27,6 @@ export class Inscription extends Component {
 
     }
     funcH() {
-        console.warn("changed")
         if (this.state.iconColourH !== '#2C5077'){
             this.setState({
                 iconColourH : "#2C5077",
@@ -44,7 +42,7 @@ export class Inscription extends Component {
     render() {
         return (
             <KeyboardAvoidingView contentContainerStyle={styles.keyboard}
-                                  behavior={"position"} enabled>
+                                  behavior={"padding"} enabled keyboardVerticalOffset={10}>
             <ScrollView>
             <View style={styles.view}>
                 <ImageBackground
@@ -55,7 +53,8 @@ export class Inscription extends Component {
                         position: 'relative', // because it's parent
                         top: 2,
                         left: 2,
-                        resizeMode: 'stretch'
+                        resizeMode: 'stretch',
+                        marginTop:20,
 
                     }}
                 >
@@ -72,21 +71,22 @@ export class Inscription extends Component {
                     </Text>
                 </ImageBackground>
             <Formik
-                initialValues={{ email: '' }}
+                initialValues={{ email: '',prenom : '', nom : '',password : '',passwordverify : '',date : '',taille : '',poids : '' }}
                 onSubmit={values => console.log(values)}
             >
                 {({ handleChange, handleBlur, handleSubmit, values }) => (
                     <View style={styles.view}>
                         <TextInput
                             style={styles.textInput}
-                            onChangeText={handleChange('email')}
-                            onBlur={handleBlur('email')}
+                            type={'password'}
+                            onChangeText={handleChange('prenom')}
+                            onBlur={handleBlur('prenom')}
                             placeholder={'Prenom'}
                         />
                         <TextInput
                             style={styles.textInput}
-                            onChangeText={handleChange('email')}
-                            onBlur={handleBlur('email')}
+                            onChangeText={handleChange('nom')}
+                            onBlur={handleBlur('nom')}
                             placeholder={'Nom'}
                         />
                         <TextInput
@@ -97,17 +97,17 @@ export class Inscription extends Component {
                         />
                         <TextInput
                             style={styles.textInput}
-                            onChangeText={handleChange('email')}
-                            onBlur={handleBlur('email')}
+                            onChangeText={handleChange('password')}
+                            onBlur={handleBlur('password')}
                             placeholder={'Mot de passe'}
                         />
                         <TextInput
                             style={styles.textInput}
-                            onChangeText={handleChange('email')}
-                            onBlur={handleBlur('email')}
-                            placeholder={'Verification mot de passe'}
+                            onChangeText={handleChange('passwordverify')}
+                            onBlur={handleBlur('passwordverify')}
+                            placeholder={'Verification du mot de passe'}
                         />
-                        <View style={{ flexDirection: 'row', justifyContent: 'center', flex: 1}}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'center', flex: 1,marginTop: 20}}>
                         <Icon
                             raised
                             name='male'
@@ -135,24 +135,26 @@ export class Inscription extends Component {
                         </View>
                         <TextInput
                             style={styles.textInput}
-                            onChangeText={handleChange('email')}
-                            onBlur={handleBlur('email')}
+                            onChangeText={handleChange('date')}
+                            onBlur={handleBlur('date')}
                             placeholder={'Date de naissance'}
                         />
                         <TextInput
+                            keyboardType={'phone-pad'}
                             style={styles.textInput}
-                            onChangeText={handleChange('email')}
-                            onBlur={handleBlur('email')}
+                            onChangeText={handleChange('taille')}
+                            onBlur={handleBlur('taille')}
                             placeholder={'Taille'}
                         />
                         <TextInput
+                            keyboardType={'phone-pad'}
                             style={styles.textInput}
-                            onChangeText={handleChange('email')}
-                            onBlur={handleBlur('email')}
+                            onChangeText={handleChange('poids')}
+                            onBlur={handleBlur('poids')}
                             placeholder={'Poids'}
                         />
                         <Button
-                            buttonStyle={{backgroundColor:'#2C5077',width:120,height:50}}
+                            buttonStyle={{backgroundColor:'#2C5077',width:120,height:50,marginTop:10,marginBottom:10}}
                             title="Inscription"
                             type="solid"
                             color="#2C5077"
@@ -181,7 +183,6 @@ const styles = StyleSheet.create({
     view: {
         alignItems: 'center',
         flex: 1,
-        paddingTop : 50,
     },
     textInput: {
         width : 350,
@@ -194,7 +195,7 @@ const styles = StyleSheet.create({
         fontSize: 20
     },
     keyboard: {
-        marginBottom : 50
+        marginBottom : 0
     }
 
 
