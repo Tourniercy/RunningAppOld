@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
-import LoginScreen from './view/Login';
-import HomeScreen from './view/Home';
-import InscriptionScreen from './view/Inscription';
-import ForgotPasswordScreen from './view/ForgotPassword';
+import LoginScreen from '../view/Login';
+import HomeScreen from '../view/Home';
+import InscriptionScreen from '../view/Inscription';
+import ForgotPasswordScreen from '../view/ForgotPassword';
 
 const NavigationStack = createStackNavigator({
     Login: {

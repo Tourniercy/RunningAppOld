@@ -25,7 +25,7 @@ export class Login extends Component {
                 behavior="position" enabled>
                     <Image
                         style={{alignSelf: 'center', width: 100, height: 100}}
-                        source={require('../src/img/Logo.png')}
+                        source={require('../assets/img/Logo.png')}
                     />
                     <Text style={{alignSelf: 'center', fontSize:40, marginTop: 20,color: '#2C5077',letterSpacing:7}}>RUNNING</Text>
                     <View>

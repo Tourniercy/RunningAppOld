@@ -46,7 +46,7 @@ export class Inscription extends Component {
             <ScrollView>
             <View style={styles.view}>
                 <ImageBackground
-                    source={require('../src/img/Inscription.png')}
+                    source={require('../assets/img/Inscription.png')}
                     style={{
                         height: 60,
                         width: 240,
