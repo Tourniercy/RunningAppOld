@@ -131,14 +131,6 @@ export default class App extends Component {
                     <Polyline
                         coordinates={routeCoordinates}
                         strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
-                        strokeColors={[
-                            '#7F0000',
-                            '#00000000', // no color, creates a "long" gradient between the previous and next coordinate
-                            '#B24112',
-                            '#E5845C',
-                            '#238C23',
-                            '#7F0000'
-                        ]}
                         strokeWidth={6}
                     />
                 </MapView>

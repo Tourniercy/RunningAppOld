@@ -32,6 +32,7 @@
           "apiKey": "AIzaSyBxhdlP6HfsnBJ0UOG13Oh1zpNEzj7uyis"
         }
       },
+      "package": "com.yourcompany.yourappname",
       "permissions": [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
