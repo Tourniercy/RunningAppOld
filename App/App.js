@@ -10,11 +10,11 @@ const store = createStore(allReducers);
 export default class App extends Component {
     render() {
         return (
+            <Provider store= {store}>
             <SafeAreaView style={styles.droidSafeArea}>
-                <Provider store= {store}>
                     <Home />
-                </Provider>
             </SafeAreaView>
+            </Provider>
 
         );
     }

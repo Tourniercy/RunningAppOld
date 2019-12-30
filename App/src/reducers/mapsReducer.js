@@ -1,11 +1,13 @@
-let count= 0;
-console.log('MapsReducer.js :',count);
-export default function(state=count, action){
+let maps= {};
+let mapState = ({ });
+let longitude;
+let latitude;
+export default function(state=maps, action){
     switch (action.type) {
-        case "Increment": count++;
-            break;
-        case "Decrement": count--;
+        case "Coord":
+            mapState = ({ latitude : 10, longitude: 10 });
             break;
     }
-    return count;
+    console.log(mapState);
+    return {mapState};
 }
