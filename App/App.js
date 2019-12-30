@@ -1,16 +1,19 @@
-// App.js
-
 import React, { Component } from 'react';
 import {Platform, StatusBar, StyleSheet, SafeAreaView} from 'react-native';
-import { createStackNavigator } from 'react-navigation-stack';
 import Container from './navigation/Navigation';
-import Home from './view/Home';
+import Home from './view/Home'
+import allReducers from './src/reducers/index.js';
+import {createStore} from 'redux';
+import {Provider} from 'react-redux';
+const store = createStore(allReducers);
 
-export default class YourApp extends Component {
+export default class App extends Component {
     render() {
         return (
             <SafeAreaView style={styles.droidSafeArea}>
-                <Home />
+                <Provider store= {store}>
+                    <Home />
+                </Provider>
             </SafeAreaView>
 
         );

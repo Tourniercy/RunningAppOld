@@ -1,16 +1,13 @@
-import React from 'react'
-import { render } from 'react-dom'
-import { createStore } from 'redux'
-import { Provider } from 'react-redux'
+// store.js
 
-import App from './components/App'
-import reducer from './reducers'
+import { createStore, combineReducers } from 'redux';
+import placeReducer from '../reducers/mapsreducer';
 
-const store = createStore(reducer);
+const rootReducer = combineReducers({
+    places: placeReducer
+});
 
-render(
-    <Provider store={store}>
-        <App />
-    </Provider>,
-    document.getElementById('root'),
-)
+const configureStore = () => {
+    return createStore(rootReducer);
+}
+export default configureStore;
