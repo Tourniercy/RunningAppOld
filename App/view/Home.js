@@ -40,7 +40,6 @@ const _App = ({ latitude, longitude }) => {
         }
         useEffectPromise();
     }, [])
-    console.log({latitude: latitude, longitude: longitude, test: "TEST"});
     return (
         <View>
             <Text>Lat: {latitude}</Text>

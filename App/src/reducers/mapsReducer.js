@@ -1,13 +1,12 @@
-let maps= {};
-let mapState = ({ });
-let longitude;
-let latitude;
-export default function(state=maps, action){
+export default function(state, action){
+    console.log(action);
     switch (action.type) {
         case "Coord":
-            mapState = ({ latitude : 10, longitude: 10 });
-            break;
+            console.log(action);
+            return {
+                mapState = {10,10
+            };
+        default:
+            return null;
     }
-    console.log(mapState);
-    return {mapState};
-}
+};
