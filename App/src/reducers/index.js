@@ -1,8 +1,6 @@
 import {combineReducers} from 'redux';
-import countReducer from './countReducer';
-import maps from './mapsReducer'
+import coordinate from './mapreducer.js';
 const allReducers= combineReducers({
-  count: countReducer,
-  maps : maps,
+  coordinate : coordinate
 });
 export default allReducers;

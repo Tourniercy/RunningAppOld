@@ -2,12 +2,8 @@ import * as Location from 'expo-location'
 import * as Permissions from 'expo-permissions'
 import * as TaskManager from 'expo-task-manager'
 import React, {useEffect} from 'react'
-import { Text, View } from 'react-native'
-import { connect,Provider } from 'react-redux'
-import allReducers from '../src/reducers/index.js';
-import {createStore} from 'redux';
-import {setLocation} from "../src/actions";
-const store = createStore(allReducers);
+import {Text, View, AsyncStorage} from 'react-native'
+import {connect} from 'react-redux'
 
 const LOCATION_TASK_NAME = 'background-location-task'
 
@@ -31,15 +27,19 @@ const _App = ({ latitude, longitude }) => {
     }
 
     useEffect(() => {
-        trackUserLocation() // start tracking
-    }, [])
+        async function fetchData() {
+            const response = await trackUserLocation();
+        }
+        let promise = fetchData();
+    }, []);
 
     useEffect(() => {
-        async function useEffectPromise() {
-            return trackUserLocation() // cleanup
+        async function fetchData() {
+            return await trackUserLocation();
         }
-        useEffectPromise();
+        let promise = fetchData();
     }, [])
+
     return (
         <View>
             <Text>Lat: {latitude}</Text>
@@ -60,6 +60,7 @@ TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
     }
     if (data) {
         const { latitude, longitude } = data.locations[0].coords
-        store.dispatch(setLocation({ latitude, longitude }))
+        console.log(latitude,longitude);
+        // store.dispatch(updateCoordinates({ latitude, longitude }))
     }
 })

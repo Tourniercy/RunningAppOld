@@ -1,21 +1,14 @@
 import React, { Component } from 'react';
 import {Platform, StatusBar, StyleSheet, SafeAreaView} from 'react-native';
 import Container from './navigation/Navigation';
-import Home from './view/Home'
-import allReducers from './src/reducers/index.js';
-import {createStore} from 'redux';
-import {Provider} from 'react-redux';
-const store = createStore(allReducers);
-
+import Home from './view/Home';
+import StoreApp from './src/App'
 export default class App extends Component {
     render() {
         return (
-            <Provider store= {store}>
             <SafeAreaView style={styles.droidSafeArea}>
-                    <Home />
+                    <StoreApp />
             </SafeAreaView>
-            </Provider>
-
         );
     }
 }
