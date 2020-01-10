@@ -1,4 +1,4 @@
-import {AsyncStorage, Text, View} from 'react-native';
+import {AsyncStorage, Text, View,AppState} from 'react-native';
 import React, {Component} from 'react';
 import MapView, {Polyline} from "react-native-maps";
 import * as Permissions from 'expo-permissions';
@@ -34,13 +34,16 @@ export default class Home extends Component {
             coordinate: ({
                 latitude: null,
                 longitude: null
-            })
+            }),
+            appState: AppState.currentState,
         };
     }
 
     componentDidMount = async() => {
+        AppState.addEventListener('change', this._handleAppStateChange);
         this.findCurrentLocationAsync().then(() => {
             if (this.state.location)  {
+                functionAsync();
                 this.watchId = navigator.geolocation.watchPosition(
                     (position) => {
                         this.setState({
@@ -85,9 +88,11 @@ export default class Home extends Component {
 
                 );
             }
-        });
-        await Location.startLocationUpdatesAsync('GetLocation', {
-            accuracy: Location.Accuracy.Balanced,
+            async function functionAsync() {
+                await Location.startLocationUpdatesAsync('GetLocation', {
+                    accuracy: Location.Accuracy.Balanced,
+                });
+            }
         });
     }
     componentWillUnmount() {
@@ -108,6 +113,13 @@ export default class Home extends Component {
 
 
     };
+    _handleAppStateChange = async (nextAppState) => {
+        if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+            console.log('App has come to the foreground!');
+        }
+        const dataFetch = await Home.getData(STORAGE_KEY);
+        this.setState({appState: nextAppState,routeCoordinatesLast: dataFetch});
+    };
     render() {
         let text = 'Waiting..';
         let latitude = 0;
@@ -124,7 +136,8 @@ export default class Home extends Component {
             longitude = (this.state.longitude);
             distance = (this.state.distance);
             totalDistance = (this.state.totalDistance);
-            routeCoordinates = (this.state.routeCoordinates);
+            routeCoordinates = JSON.parse(this.state.routeCoordinatesLast);
+            console.log('routeCoordinates',routeCoordinates);
 
         }
         return (
@@ -161,22 +174,13 @@ if (!TaskManager.isTaskDefined('GetLocation')) {
             return;
         }
         if (data) {
-            let dataMaps = {};
+            const dataStorage = [{latitude:data.locations[0].coords.latitude,longitude:data.locations[0].coords.longitude }];
             const dataFetch = await Home.getData(STORAGE_KEY);
             if (dataFetch == null) {
-                const array = [];
-                array.push({item:'item'});
-
-                await Home.setData(STORAGE_KEY,JSON.stringify(array));
-                // dataMaps = dataFetch.push({pdt:'555'});
+                await Home.setData(STORAGE_KEY,JSON.stringify(dataStorage));
             } else {
-                console.log((dataFetch.push(JSON.stringify({item:'item'}))),'Array');
-                await Home.setData(STORAGE_KEY,dataFetch);
+                await Home.setData(STORAGE_KEY,JSON.stringify(JSON.parse(dataFetch).concat(dataStorage)));
             }
-            // console.log(dataFetch,': TEST');
-            const {locations} = data;
-            // console.log(locations);
-            // do something with the locations captured in the background
         }
     })
 };
