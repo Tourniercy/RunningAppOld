@@ -1,6 +1,7 @@
 import {AsyncStorage, Text, View,AppState} from 'react-native';
 import React, {Component} from 'react';
 import MapView, {Polyline} from "react-native-maps";
+import { Button } from 'react-native-elements';
 import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
@@ -15,27 +16,15 @@ export default class Home extends Component {
     static getData = async (key) => {
         return await AsyncStorage.getItem(key);
     };
-
-
-
     constructor(props) {
         super(props);
 
         this.state = {
-            latitude: null,
-            longitude: null,
-            error: null,
-            prevLatitude: null,
-            prevLongitude: null,
-            location: null,
+            appState : '',
+            location: {},
             distance: null,
             routeCoordinates : null,
             totalDistance : null,
-            coordinate: ({
-                latitude: null,
-                longitude: null
-            }),
-            appState: AppState.currentState,
         };
     }
 
@@ -44,59 +33,39 @@ export default class Home extends Component {
         this.findCurrentLocationAsync().then(() => {
             if (this.state.location)  {
                 functionAsync();
-                this.watchId = navigator.geolocation.watchPosition(
-                    (position) => {
-                        this.setState({
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude,
-                            error: null,
-                        });
-                        if (this.state.prevLatitude)  {
-                            this.setState({
-                                distance:  geolib.getDistance(
-                                    { latitude: position.coords.latitude, longitude: position.coords.longitude },
-                                    { latitude: this.state.prevLatitude, longitude: this.state.prevLongitude }
-                                ),
-                                prevLatitude : position.coords.latitude,
-                                prevLongitude : position.coords.longitude,
-                                totalDistance : geolib.getDistance(
-                                    { latitude: position.coords.latitude, longitude: position.coords.longitude },
-                                    { latitude: this.state.prevLatitude, longitude: this.state.prevLongitude }
-                                ) + this.state.totalDistance,
-                                routeCoordinates: this.state.routeCoordinates.concat([{latitude: position.coords.latitude, longitude: position.coords.longitude}]),
-                            });
-                        } else {
-                            this.setState({
-                                prevLatitude : this.state.latitude,
-                                prevLongitude : this.state.longitude,
-                                distance:  geolib.getDistance(
-                                    { latitude: position.coords.latitude, longitude: position.coords.longitude },
-                                    { latitude: position.coords.latitude, longitude: position.coords.longitude }
-                                ),
-                                totalDistance : geolib.getDistance(
-                                    { latitude: position.coords.latitude, longitude: position.coords.longitude },
-                                    { latitude: position.coords.latitude, longitude: position.coords.longitude }
-                                ),
-                                routeCoordinates: ([{latitude: position.coords.latitude, longitude: position.coords.longitude}]),
-
-                            });
-                        }
-
-                    },
-                    (error) => this.setState({ error: error.message }),
-                    { enableHighAccuracy: true, timeout: 20000, maximumAge: 0, distanceFilter: 1},
-
-                );
             }
             async function functionAsync() {
                 await Location.startLocationUpdatesAsync('GetLocation', {
                     accuracy: Location.Accuracy.Balanced,
+                    deferredUpdatesInterval : 5000,
+
                 });
             }
         });
     }
+    componentDidUpdate = async() => {
+        const dataFetch = await Home.getData(STORAGE_KEY);
+        if (dataFetch != null) {
+            this.setState({routeCoordinates: dataFetch});
+        }
+
+    }
+    onUserLocationChange = async () => {
+        const dataFetch = await Home.getData(STORAGE_KEY);
+        this.setState({routeCoordinates: dataFetch});
+        if (dataFetch) {
+            console.log(JSON.parse(dataFetch[dataFetch.length-1]));
+        }
+
+    };
+    _handleAppStateChange = async (nextAppState) => {
+        if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+            console.log('App has come to the foreground!');
+        }
+        const dataFetch = await Home.getData(STORAGE_KEY);
+        this.setState({appState: nextAppState,routeCoordinates: dataFetch});
+    };
     componentWillUnmount() {
-        navigator.geolocation.clearWatch(this.watchId);
     }
     findCurrentLocationAsync = async () => {
         let { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -108,37 +77,24 @@ export default class Home extends Component {
         }
 
         let location = await Location.getCurrentPositionAsync({});
-        // console.log(location);
-        this.setState({ location });
+        this.setState({location: location});
 
 
-    };
-    _handleAppStateChange = async (nextAppState) => {
-        if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
-            console.log('App has come to the foreground!');
-        }
-        const dataFetch = await Home.getData(STORAGE_KEY);
-        this.setState({appState: nextAppState,routeCoordinatesLast: dataFetch});
     };
     render() {
         let text = 'Waiting..';
         let latitude = 0;
         let longitude = 0;
-        let distance = 0;
-        let totalDistance = 0;
         let routeCoordinates= [];
-        let name = (this.state.name);
 
         if (this.state.error) {
             text = this.state.error;
-        } else if (this.state.latitude) {
-            latitude = (this.state.latitude);
-            longitude = (this.state.longitude);
-            distance = (this.state.distance);
-            totalDistance = (this.state.totalDistance);
-            routeCoordinates = JSON.parse(this.state.routeCoordinatesLast);
-            console.log('routeCoordinates',routeCoordinates);
-
+        } else if (this.state.location.coords) {
+            latitude = (this.state.location.coords.latitude);
+            longitude = (this.state.location.coords.longitude);
+            if (this.state.routeCoordinates != null) {
+                routeCoordinates = JSON.parse(this.state.routeCoordinates);
+            }
         }
         return (
             <View style={{flex:1}}>
@@ -153,6 +109,7 @@ export default class Home extends Component {
                         latitudeDelta: 0.02,
                         longitudeDelta: 0.02
                     }}
+                    onUserLocationChange={this.onUserLocationChange}
                 >
                     <Polyline
                         coordinates={routeCoordinates}
@@ -160,9 +117,12 @@ export default class Home extends Component {
                         strokeWidth={6}
                     />
                 </MapView>
-
-
-                <Text>{distance}</Text>
+                <Button
+                    buttonStyle={{backgroundColor:'#2C5077',width:120,height:50}}
+                    title="Lancer"
+                    type="solid"
+                    color="#2C5077"
+                />
             </View>
         );
     }
