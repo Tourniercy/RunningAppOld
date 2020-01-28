@@ -9,13 +9,9 @@ import * as geolib from 'geolib';
 
 
 const STORAGE_KEY = ''+Math.random().toString(36).substring(7)+''
+
 export default class Home extends Component {
-    static setData = async (key,data) => {
-        await AsyncStorage.setItem(key,data);
-    };
-    static getData = async (key) => {
-        return await AsyncStorage.getItem(key);
-    };
+
     constructor(props) {
         super(props);
 
@@ -27,6 +23,14 @@ export default class Home extends Component {
             totalDistance : null,
         };
     }
+
+    static setData = async (key,data) => {
+        await AsyncStorage.setItem(key,data);
+    };
+
+    static getData = async (key) => {
+        return await AsyncStorage.getItem(key);
+    };
 
     componentDidMount = async() => {
         AppState.addEventListener('change', this._handleAppStateChange);
@@ -43,6 +47,7 @@ export default class Home extends Component {
             }
         });
     }
+
     componentDidUpdate = async() => {
         const dataFetch = await Home.getData(STORAGE_KEY);
         if (dataFetch != null) {
@@ -50,23 +55,25 @@ export default class Home extends Component {
         }
 
     }
+
     onUserLocationChange = async () => {
         const dataFetch = await Home.getData(STORAGE_KEY);
         this.setState({routeCoordinates: dataFetch});
         if (dataFetch) {
             console.log(JSON.parse(dataFetch[dataFetch.length-1]));
         }
+    }
 
-    };
     _handleAppStateChange = async (nextAppState) => {
         if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
             console.log('App has come to the foreground!');
         }
         const dataFetch = await Home.getData(STORAGE_KEY);
         this.setState({appState: nextAppState,routeCoordinates: dataFetch});
-    };
-    componentWillUnmount() {
     }
+
+    // componentWillUnmount() {}
+
     findCurrentLocationAsync = async () => {
         let { status } = await Permissions.askAsync(Permissions.LOCATION);
 
@@ -78,10 +85,10 @@ export default class Home extends Component {
 
         let location = await Location.getCurrentPositionAsync({});
         this.setState({location: location});
+    }
 
-
-    };
     render() {
+
         let text = 'Waiting..';
         let latitude = 0;
         let longitude = 0;
@@ -89,13 +96,17 @@ export default class Home extends Component {
 
         if (this.state.error) {
             text = this.state.error;
-        } else if (this.state.location.coords) {
+        }
+        else if (this.state.location.coords) {
+
             latitude = (this.state.location.coords.latitude);
             longitude = (this.state.location.coords.longitude);
+
             if (this.state.routeCoordinates != null) {
                 routeCoordinates = JSON.parse(this.state.routeCoordinates);
             }
         }
+
         return (
             <View style={{flex:1}}>
                 <MapView
@@ -128,6 +139,7 @@ export default class Home extends Component {
     }
 }
 if (!TaskManager.isTaskDefined('GetLocation')) {
+
     TaskManager.defineTask('GetLocation', async({data, error}) => {
         if (error) {
             // Error occurred - check `error.message` for more details.
