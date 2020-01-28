@@ -47,7 +47,8 @@
     "yup": "^0.28.0"
   },
   "devDependencies": {
-    "babel-preset-expo": "^7.1.0"
+    "babel-preset-expo": "^7.1.0",
+    "react-navigation-tabs": "^2.7.0"
   },
   "private": true
 }

@@ -6,6 +6,7 @@ import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import CustomMaps from '../component/MapsView';
+import BottomNavigation from '../navigation/BottomNavigator'
 
 import * as geolib from 'geolib';
 
@@ -163,7 +164,9 @@ export default class Home extends Component {
                         });
                     }}
                 />
+                <BottomNavigation />
             </View>
+
         );
     }
 }
