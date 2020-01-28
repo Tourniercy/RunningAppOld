@@ -16,12 +16,11 @@ export class Login extends Component {
         const validationSchema = yup.object().shape({
             email: yup.string()
                 .label('Email')
-                .email('Enter a valid email')
-                .required('Please enter a registered email'),
+                .email('Entrez une adresse Email valide')
+                .required('Cet Email n"existe pas'),
             password: yup.string()
                 .label('Password')
                 .required()
-                .min(4, 'Password must have at least 4 characters ')
         })
         return (
             <Formik
