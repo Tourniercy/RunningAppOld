@@ -33,6 +33,8 @@ export default class Home extends Component {
         };
     }
 
+    //functions to change location
+
     componentDidMount = async() => {
         AppState.addEventListener('change', this._handleAppStateChange);
         this.findCurrentLocationAsync().then(() => {
@@ -114,6 +116,7 @@ export default class Home extends Component {
                 routeCoordinates = JSON.parse(this.state.routeCoordinates);
             }
         }
+        //JSX
         return (
             <View style={{flex:1}}>
                 <MapView
