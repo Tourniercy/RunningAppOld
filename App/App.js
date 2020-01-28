@@ -8,7 +8,7 @@ export default class App extends Component {
     render() {
         return (
             <SafeAreaView style={styles.droidSafeArea}>
-                    <BottomNavigation />
+                    <Container />
             </SafeAreaView>
         );
     }
