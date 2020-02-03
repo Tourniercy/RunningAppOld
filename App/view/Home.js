@@ -1,4 +1,4 @@
-import {AsyncStorage, Text, View,AppState} from 'react-native';
+import {AsyncStorage, Text, View,AppState,Image} from 'react-native';
 import React, {Component} from 'react';
 import MapView, {Polyline} from "react-native-maps";
 import { Button } from 'react-native-elements';
@@ -41,7 +41,6 @@ export default class Home extends Component {
             async function functionAsync() {
                 await Location.startLocationUpdatesAsync('GetLocation', {
                     accuracy: Location.Accuracy.Highest,
-
                 });
             }
         });
@@ -115,10 +114,34 @@ export default class Home extends Component {
         }
         return (
             <View style={{flex:1}}>
+                <View style={{flex:1,backgroundColor:'white'}}>
+                <View style={{flex: 1, flexDirection: 'row',alignContent:'stretch',justifyContent:'center',alignItems: 'stretch',paddingTop:10}}>
+                    <View style={{flex: 1, width:50, alignItems:'center'}}>
+                        <Image
+                            style={{alignSelf: 'center', width: 50, height: 50}}
+                            source={require('../assets/img/Logo.png')}
+                        />
+                    </View>
+                </View>
+                <View style={{flex: 1, flexDirection: 'row',alignContent:'stretch',justifyContent:'center',alignItems: 'stretch'}}>
+                    <View style={{flex: 1,alignItems:'center'}} >
+                        <Text style={{fontSize: 24}}>00:00</Text>
+                        <Text style={{fontSize: 12}}>Rythme. moy. (min/km)</Text>
+                    </View>
+                    <View style={{flex: 1, width:50,alignItems:'center'}}>
+                        <Text style={{fontSize: 24}}>00:00</Text>
+                        <Text style={{fontSize: 12}}>Calories (cal)</Text>
+                    </View>
+                    <View style={{flex: 1, width:50, alignItems:'center'}}>
+                        <Text style={{fontSize: 24}}>0,00</Text>
+                        <Text style={{fontSize: 12}}>Distance (km)</Text>
+                    </View>
+                </View>
+                </View>
                 <MapView
                     showsUserLocation={ true }
                     style={{
-                        flex: 1
+                        flex: 5
                     }}
                     region={{
                         latitude: latitude,
@@ -133,36 +156,31 @@ export default class Home extends Component {
                     <Polyline
                         coordinates={routeCoordinates}
                         strokeColor="blue" // fallback for when `strokeColors` is not supported by the map-provider
-                        strokeWidth={4}
+                        strokeWidth={5}
                     />
                 </MapView>
                 <View
                     style={{
                         position: 'absolute',//use absolute position to show button on top of the map
                         top: '80%', //for center align
-                        alignSelf: 'center' //for align to right
+                        alignSelf: 'center', //for align to right
+                        flexDirection: 'row',
                     }}
                 >
                     <Button
-                        buttonStyle={{backgroundColor:'#2C5077',width:120,height:50}}
+                        buttonStyle={{backgroundColor:'#2C5077',width:120,height:50,marginRight:50}}
                         title="Depart"
+                        type="solid"
+                        color="#2C5077"
+                    />
+                    <Button
+                        buttonStyle={{backgroundColor:'#2C5077',width:120,height:50}}
+                        title="Stop"
                         type="solid"
                         color="#2C5077"
                     />
                 </View>
 
-                <Button
-                    buttonStyle={{backgroundColor:'#2C5077',width:120,height:50}}
-                    title="Stopper"
-                    type="solid"
-                    color="#2C5077"
-                    onPress={() => {
-                        this.props.navigation.navigate('Inscription', {
-                            Login: 'Cyril',
-                            Password: 'TEST',
-                        });
-                    }}
-                />
             </View>
         );
     }
@@ -175,7 +193,6 @@ if (!TaskManager.isTaskDefined('GetLocation')) {
         }
         if (data) {
             const dataStorage = [{latitude:data.locations[data.locations.length-1].coords.latitude,longitude:data.locations[data.locations.length-1].coords.longitude,timestamp:data.locations[data.locations.length-1].timestamp}];
-            // console.log('data : ',data.locations[data.locations.length-1]);
             const dataFetch = await Home.getData(STORAGE_KEY);
             if (dataFetch == null) {
                 await Home.setData(STORAGE_KEY,JSON.stringify(dataStorage));
