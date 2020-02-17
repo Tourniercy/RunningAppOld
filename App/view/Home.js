@@ -27,7 +27,7 @@ export default class Home extends Component {
             lastLocation : {},
             movedLocation :{},
             dragged : false,
-            distance: null,
+            distance: 0,
             routeCoordinates : null,
             totalDistance : null,
         };
@@ -74,10 +74,12 @@ export default class Home extends Component {
         }
         if (time >= 5) {
             const dataFetch = await Home.getData(STORAGE_KEY);
+            const distance = await Home.getData(STORAGE_KEY_SECOND);
             this.setState({routeCoordinates: dataFetch});
             if (dataFetch) {
+                let distanceParsed = JSON.parse(distance);
                 let dataFetchParsed = JSON.parse(dataFetch);
-                this.setState({lastLocation : dataFetchParsed[dataFetchParsed.length-1]});
+                this.setState({lastLocation : dataFetchParsed[dataFetchParsed.length-1],distance: distanceParsed});
             }
         }
     };
@@ -117,6 +119,7 @@ export default class Home extends Component {
             }
             if (this.state.routeCoordinates != null) {
                 routeCoordinates = JSON.parse(this.state.routeCoordinates);
+                distance = this.state.distance;
             }
         }
         return (
@@ -140,7 +143,7 @@ export default class Home extends Component {
                         <Text style={{fontSize: 12}}>Calories (cal)</Text>
                     </View>
                     <View style={{flex: 1, width:50, alignItems:'center'}}>
-                        <Text style={{fontSize: 24}}>0,00</Text>
+                        <Text style={{fontSize: 24}}>{distance}</Text>
                         <Text style={{fontSize: 12}}>Distance (km)</Text>
                     </View>
                 </View>
@@ -207,12 +210,16 @@ if (!TaskManager.isTaskDefined('GetLocation')) {
                 await Home.setData(STORAGE_KEY,JSON.stringify(dataStorage));
             } else {
                 let DataParse = JSON.parse(dataFetch);
-                geolib.getDistance(
-                    { latitude: DataParse[DataParse.length-1].latitude, longitude: DataParse[DataParse.length-1].longitude },
-                    { latitude: "51° 31' N", longitude: "7° 28' E" }
+                let distance = geolib.getDistance(
+                    { latitude: dataStorage[0].latitude, longitude : dataStorage[0].longitude },
+                    { latitude: DataParse[DataParse.length-1].latitude, longitude: DataParse[DataParse.length-1].longitude }
                 );
-                console.log(DataParse[DataParse.length-1]);
-
+                const totaldistance = await Home.getData(STORAGE_KEY_SECOND);
+                if (totaldistance == null) {
+                    await Home.setData(STORAGE_KEY_SECOND, JSON.stringify(distance));
+                } else {
+                    await Home.setData(STORAGE_KEY_SECOND, JSON.stringify(JSON.parse(totaldistance)+distance));
+                }
                 await Home.setData(STORAGE_KEY,JSON.stringify(JSON.parse(dataFetch).concat(dataStorage)));
             }
         }
