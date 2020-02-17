@@ -10,6 +10,7 @@ import CustomMaps from '../component/MapsView';
 import * as geolib from 'geolib';
 
 const STORAGE_KEY = ''+Math.random().toString(36).substring(7)+'';
+const STORAGE_KEY_SECOND = ''+Math.random().toString(36).substring(7)+'';
 export default class Home extends Component {
     static setData = async (key,data) => {
         await AsyncStorage.setItem(key,data);
@@ -80,7 +81,12 @@ export default class Home extends Component {
             }
         }
     };
-
+    _onPressStart = async () => {
+        console.log('Start!');
+    };
+    _onPressStop = async () => {
+        console.log('Stop!');
+    };
     onPanDrag = async (coordinate) => {
         coordinate = {}
         this.setState({dragged: true,movedLocation : coordinate});
@@ -92,6 +98,7 @@ export default class Home extends Component {
         let latitude = 0;
         let longitude = 0;
         let routeCoordinates= [];
+        let distance = 0;
 
         if (this.state.error) {
             text = this.state.error;
@@ -172,12 +179,14 @@ export default class Home extends Component {
                         title="Depart"
                         type="solid"
                         color="#2C5077"
+                        onPress={this._onPressStart}
                     />
                     <Button
                         buttonStyle={{backgroundColor:'#2C5077',width:120,height:50}}
                         title="Stop"
                         type="solid"
                         color="#2C5077"
+                        onPress={this._onPressStop}
                     />
                 </View>
 
@@ -197,6 +206,13 @@ if (!TaskManager.isTaskDefined('GetLocation')) {
             if (dataFetch == null) {
                 await Home.setData(STORAGE_KEY,JSON.stringify(dataStorage));
             } else {
+                let DataParse = JSON.parse(dataFetch);
+                geolib.getDistance(
+                    { latitude: DataParse[DataParse.length-1].latitude, longitude: DataParse[DataParse.length-1].longitude },
+                    { latitude: "51° 31' N", longitude: "7° 28' E" }
+                );
+                console.log(DataParse[DataParse.length-1]);
+
                 await Home.setData(STORAGE_KEY,JSON.stringify(JSON.parse(dataFetch).concat(dataStorage)));
             }
         }
