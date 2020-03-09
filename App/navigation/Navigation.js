@@ -3,6 +3,7 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import LoginScreen from '../view/Login';
 import HomeScreen from '../view/Home';
+import BottomNavigation from './BottomNavigator'
 import InscriptionScreen from '../view/Inscription';
 import ForgotPasswordScreen from '../view/ForgotPassword';
 
@@ -14,7 +15,7 @@ const NavigationStack = createStackNavigator({
         },
     },
     Home: {
-        screen: HomeScreen,
+        screen: BottomNavigation,
         navigationOptions: {
             header: null,
         },
@@ -31,6 +32,7 @@ const NavigationStack = createStackNavigator({
             header: null
         }
     }
+
 }
 );
 
