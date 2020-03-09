@@ -1,11 +1,13 @@
 import {AsyncStorage, Text, View,AppState,Image} from 'react-native';
 import React, {Component} from 'react';
 import MapView, {Polyline} from "react-native-maps";
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Button } from 'react-native-elements';
 import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import CustomMaps from '../component/MapsView';
+
 
 import * as geolib from 'geolib';
 
@@ -22,7 +24,11 @@ export default class Home extends Component {
         super(props);
 
         this.state = {
+            toggle: false,
+            bottomMargin: 1,
+            canStart : true,
             appState : '',
+            started : false,
             location: {},
             lastLocation : {},
             movedLocation :{},
@@ -32,17 +38,16 @@ export default class Home extends Component {
             totalDistance : null,
         };
     }
-
+    _startLoc = async () => {
+        await Location.startLocationUpdatesAsync('GetLocation', {
+            accuracy: Location.Accuracy.Highest,
+        });
+    };
     componentDidMount = async() => {
         AppState.addEventListener('change', this._handleAppStateChange);
         this.findCurrentLocationAsync().then(() => {
             if (this.state.location)  {
-                functionAsync();
-            }
-            async function functionAsync() {
-                await Location.startLocationUpdatesAsync('GetLocation', {
-                    accuracy: Location.Accuracy.Highest,
-                });
+                this.setState({canStart : true});
             }
         });
     }
@@ -53,8 +58,8 @@ export default class Home extends Component {
         // const dataFetch = await Home.getData(STORAGE_KEY);
         // this.setState({appState: nextAppState,routeCoordinates: dataFetch});
     };
-    componentWillUnmount() {
-    }
+    // componentWillUnmount() {
+    // }
     findCurrentLocationAsync = async () => {
         let { status } = await Permissions.askAsync(Permissions.LOCATION);
         if (status !== 'granted') {
@@ -75,47 +80,72 @@ export default class Home extends Component {
         if (time >= 5) {
             const dataFetch = await Home.getData(STORAGE_KEY);
             const distance = await Home.getData(STORAGE_KEY_SECOND);
-            this.setState({routeCoordinates: dataFetch});
-            if (dataFetch) {
+            if (dataFetch  && this.state.started) {
+                this.setState({routeCoordinates: dataFetch});
                 let distanceParsed = JSON.parse(distance);
                 let dataFetchParsed = JSON.parse(dataFetch);
                 this.setState({lastLocation : dataFetchParsed[dataFetchParsed.length-1],distance: distanceParsed});
+            } else if (!this.state.started) {
+                // console.log(region);
             }
+
         }
     };
-    _onPressStart = async () => {
-        console.log('Start!');
-    };
-    _onPressStop = async () => {
-        console.log('Stop!');
+    _onPressStopStart = async () => {
+        const newState = !this.state.toggle;
+        this.setState({toggle:newState});
+        if (this.state.canStart && !this.state.toggle)  {
+            this.setState({started: true});
+            await Location.startLocationUpdatesAsync('GetLocation', {
+                accuracy: Location.Accuracy.Highest,
+            });
+            console.log('Start!');
+        } else if (this.state.canStart && this.state.toggle){
+            this.setState({started: false});
+            await Location.stopLocationUpdatesAsync('GetLocation');
+            console.log('Stop!');
+        }
     };
     onPanDrag = async (coordinate) => {
-        coordinate = {}
-        this.setState({dragged: true,movedLocation : coordinate});
-        console.log(coordinate);
+        this.setState({dragged: true});
+    };
+    _onPressCenter = async (coordinate) => {
+        this.setState({dragged: false});
     };
 
     render() {
+        let {toggle} = this.state;
+        let textValue = toggle?"Terminer":"Démarrer";
+        let buttonBg = toggle?"#6c757d":"#2C5077";
         let text = 'Waiting..';
         let latitude = 0;
         let longitude = 0;
+        let longitudeDelta = 0;
+        let latitudeDelta = 0;
+
         let routeCoordinates= [];
         let distance = 0;
-
+        // console.log(this.ref);
         if (this.state.error) {
             text = this.state.error;
-        } else if (this.state.location.coords) {
-            if (this.state.dragged !== true) {
-                if (this.state.lastLocation.latitude === undefined) {
+        }
+        if (this.state.location.coords) {
+            if (this.state.lastLocation.latitude === undefined) {
                     latitude = (this.state.location.coords.latitude);
                     longitude = (this.state.location.coords.longitude);
-                } else {
-                    latitude = (this.state.lastLocation.latitude);
-                    longitude = (this.state.lastLocation.longitude);
-                }
+                    longitudeDelta = 0.02;
+                    latitudeDelta = 0.02;
             } else {
-                    latitude = (this.state.movedLocation.latitude);
-                    longitude = (this.state.movedLocation.longitude);
+                latitude = (this.state.lastLocation.latitude);
+                longitude = (this.state.lastLocation.longitude);
+                longitudeDelta = 0.02;
+                latitudeDelta = 0.02;
+            }
+            if (this.state.dragged) {
+                latitude =  null;
+                longitude =  null;
+                longitudeDelta = null;
+                latitudeDelta = null;
             }
             if (this.state.routeCoordinates != null) {
                 routeCoordinates = JSON.parse(this.state.routeCoordinates);
@@ -149,19 +179,21 @@ export default class Home extends Component {
                 </View>
                 </View>
                 <MapView
+                    ref={(ref) => this.ref = ref}
+                    showsMyLocationButton={ false }
                     showsUserLocation={ true }
                     style={{
-                        flex: 5
+                        flex: 4
                     }}
                     region={{
                         latitude: latitude,
                         longitude: longitude,
-                        latitudeDelta: 0.02,
-                        longitudeDelta: 0.02
+                        latitudeDelta: latitudeDelta,
+                        longitudeDelta: longitudeDelta
                     }}
 
                     onUserLocationChange={this.onUserLocationChange}
-                    // onPanDrag={this.onPanDrag}
+                    onPanDrag={this.onPanDrag}
                 >
                     <Polyline
                         coordinates={routeCoordinates}
@@ -172,24 +204,36 @@ export default class Home extends Component {
                 <View
                     style={{
                         position: 'absolute',//use absolute position to show button on top of the map
-                        top: '80%', //for center align
+                        top: '23%', //for center align
+                        left : '85%',
+                        flexDirection: 'row',
+                    }}
+                >
+                    <Button
+                        icon={
+                            <Icon
+                                name="gps-fixed"
+                                size={20}
+                                color="white"
+                            />
+                        }
+                        onPress={this._onPressCenter}
+                    />
+                </View>
+                <View
+                    style={{
+                        position: 'absolute',//use absolute position to show button on top of the map
+                        top: '90%', //for center align
                         alignSelf: 'center', //for align to right
                         flexDirection: 'row',
                     }}
                 >
                     <Button
-                        buttonStyle={{backgroundColor:'#2C5077',width:120,height:50,marginRight:50}}
-                        title="Depart"
+                        buttonStyle={{backgroundColor:buttonBg,width:120,height:50}}
+                        title={textValue}
                         type="solid"
                         color="#2C5077"
-                        onPress={this._onPressStart}
-                    />
-                    <Button
-                        buttonStyle={{backgroundColor:'#2C5077',width:120,height:50}}
-                        title="Stop"
-                        type="solid"
-                        color="#2C5077"
-                        onPress={this._onPressStop}
+                        onPress={this._onPressStopStart}
                     />
                 </View>
 
