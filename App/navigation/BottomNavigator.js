@@ -5,7 +5,7 @@ import createBottomTabNavigator from "react-navigation-tabs/src/navigators/creat
 import Home from '../view/Home'
 import Icon from "react-native-vector-icons/FontAwesome";
 
-export default class App extends React.Component {
+export default class BottomNavigator extends React.Component {
     render() {
         return (
             <AppContainer />

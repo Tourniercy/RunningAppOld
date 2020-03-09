@@ -13,13 +13,16 @@ import * as geolib from 'geolib';
 
 const STORAGE_KEY = ''+Math.random().toString(36).substring(7)+'';
 const STORAGE_KEY_SECOND = ''+Math.random().toString(36).substring(7)+'';
+
 export default class Home extends Component {
+
     static setData = async (key,data) => {
         await AsyncStorage.setItem(key,data);
     };
     static getData = async (key) => {
         return await AsyncStorage.getItem(key);
     };
+
     constructor(props) {
         super(props);
 
@@ -154,29 +157,29 @@ export default class Home extends Component {
         }
         return (
             <View style={{flex:1}}>
-                <View style={{flex:1,backgroundColor:'white'}}>
-                <View style={{flex: 1, flexDirection: 'row',alignContent:'stretch',justifyContent:'center',alignItems: 'stretch',paddingTop:10}}>
-                    <View style={{flex: 1, width:50, alignItems:'center'}}>
-                        <Image
-                            style={{alignSelf: 'center', width: 50, height: 50}}
-                            source={require('../assets/img/Logo.png')}
-                        />
-                    </View>
-                </View>
-                <View style={{flex: 1, flexDirection: 'row',alignContent:'stretch',justifyContent:'center',alignItems: 'stretch'}}>
-                    <View style={{flex: 1,alignItems:'center'}} >
-                        <Text style={{fontSize: 24}}>00:00</Text>
-                        <Text style={{fontSize: 12}}>Rythme. moy. (min/km)</Text>
-                    </View>
-                    <View style={{flex: 1, width:50,alignItems:'center'}}>
-                        <Text style={{fontSize: 24}}>00:00</Text>
-                        <Text style={{fontSize: 12}}>Calories (cal)</Text>
-                    </View>
-                    <View style={{flex: 1, width:50, alignItems:'center'}}>
-                        <Text style={{fontSize: 24}}>{distance}</Text>
-                        <Text style={{fontSize: 12}}>Distance (km)</Text>
-                    </View>
-                </View>
+                <View style={{flex:1,backgroundColor:'white', padding: 10, paddingBottom: 20}}>
+                  <View style={{flex: 1, flexDirection: 'row',alignContent:'stretch',justifyContent:'center',alignItems: 'stretch',paddingTop:10}}>
+                      <View style={{flex: 1, width:50, alignItems:'center'}}>
+                          <Image
+                              style={{alignSelf: 'center', width: 50, height: 50}}
+                              source={require('../assets/img/Logo.png')}
+                          />
+                      </View>
+                  </View>
+                  <View style={{flex: 1, flexDirection: 'row',alignContent:'stretch',justifyContent:'center',alignItems: 'stretch', marginTop: 20}}>
+                      <View style={{flex: 1, alignItems:'center'}} >
+                          <Text style={{fontSize: 24, fontWeight: 'bold'}}>00</Text>
+                          <Text style={{fontSize: 12}}>Rythme. moy. (km/h)</Text>
+                      </View>
+                      <View style={{flex: 1, alignItems:'center'}}>
+                          <Text style={{fontSize: 24, fontWeight: 'bold'}}>00:00</Text>
+                          <Text style={{fontSize: 12}}>Calories (cal)</Text>
+                      </View>
+                      <View style={{flex: 1, alignItems:'center'}}>
+                          <Text style={{fontSize: 24, fontWeight: 'bold'}}>{distance}</Text>
+                          <Text style={{fontSize: 12}}>Distance (km)</Text>
+                      </View>
+                  </View>
                 </View>
                 <MapView
                     ref={(ref) => this.ref = ref}
@@ -204,8 +207,8 @@ export default class Home extends Component {
                 <View
                     style={{
                         position: 'absolute',//use absolute position to show button on top of the map
-                        top: '23%', //for center align
-                        left : '85%',
+                        top: '27%', //for center align
+                        left : '87%',
                         flexDirection: 'row',
                     }}
                 >
