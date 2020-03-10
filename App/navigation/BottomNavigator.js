@@ -4,6 +4,7 @@ import { createAppContainer } from 'react-navigation';
 import createBottomTabNavigator from "react-navigation-tabs/src/navigators/createBottomTabNavigator";
 import Home from '../view/Home'
 import Icon from "react-native-vector-icons/FontAwesome";
+import Activity from "../view/Activity";
 
 export default class App extends React.Component {
     render() {
@@ -14,7 +15,7 @@ export default class App extends React.Component {
 }
 
 
-class ExploreScreen extends React.Component {
+/*class ExploreScreen extends React.Component {
     render() {
         return(
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#d0d0d0'}}>
@@ -22,7 +23,7 @@ class ExploreScreen extends React.Component {
             </View>
         );
     }
-}
+}*/
 
 
 class ProfileScreen extends React.Component {
@@ -37,8 +38,8 @@ class ProfileScreen extends React.Component {
 
 const bottomTabNavigator = createBottomTabNavigator(
     {
-        Activ: {
-            screen: ExploreScreen,
+        Activity: {
+            screen: Activity,
             navigationOptions: {
                 tabBarIcon: ({ tintColor }) => (
                     <Icon name="search" size={25} color={tintColor} />
