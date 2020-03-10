@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Text, View, TextInput, Button, FlatList} from 'react-native';
+import { NavigationEvents} from "react-navigation";
 import ListItem from "./ListItem";
 
 export default class Activity extends React.Component{
@@ -12,6 +13,9 @@ export default class Activity extends React.Component{
             search: "",
             isLoading: false
         };
+    }
+
+    componentDidMount() {
     }
 
     refreshCourses = async () => {
@@ -32,6 +36,9 @@ export default class Activity extends React.Component{
     render() {
         return (
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#d0d0d0'}}>
+                <NavigationEvents
+                    onDidFocus={() => this.refreshCourses()}
+                />
                 <FlatList
                     data={this.state.data}
                     renderItem={({ item }) => <ListItem item={item} />}
