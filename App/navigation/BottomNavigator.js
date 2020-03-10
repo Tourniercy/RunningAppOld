@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import createBottomTabNavigator from "react-navigation-tabs/src/navigators/createBottomTabNavigator";
 import Home from '../view/Home'
-import Icon from "react-native-vector-icons/FontAwesome";
+import Icon from "react-native-vector-icons/FontAwesome5";
 import Activity from "../view/Activity";
 
 export default class App extends React.Component {
@@ -42,7 +42,7 @@ const bottomTabNavigator = createBottomTabNavigator(
             screen: Activity,
             navigationOptions: {
                 tabBarIcon: ({ tintColor }) => (
-                    <Icon name="search" size={25} color={tintColor} />
+                    <Icon name="list" size={25} color={tintColor} />
                 )
             }
         },
@@ -50,7 +50,7 @@ const bottomTabNavigator = createBottomTabNavigator(
             screen: Home,
             navigationOptions: {
                 tabBarIcon: ({ tintColor }) => (
-                    <Icon name="home" size={25} color={tintColor} />
+                    <Icon name="walking" size={25} color={tintColor} />
                 )
             }
         },
@@ -58,7 +58,7 @@ const bottomTabNavigator = createBottomTabNavigator(
             screen: ProfileScreen,
             navigationOptions: {
                 tabBarIcon: ({ tintColor }) => (
-                    <Icon name="user" size={25} color={tintColor} />
+                    <Icon name="user-alt" size={25} color={tintColor} />
                 )
             }
         },
@@ -66,7 +66,7 @@ const bottomTabNavigator = createBottomTabNavigator(
     {
         initialRouteName: 'Course',
         tabBarOptions: {
-            activeTintColor: '#5192eb'
+            activeTintColor: '#2C5077'
         }
     }
 );

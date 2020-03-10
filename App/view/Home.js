@@ -10,6 +10,7 @@ import CustomMaps from '../component/MapsView';
 
 
 import * as geolib from 'geolib';
+import {color} from "react-native-reanimated";
 
 const STORAGE_KEY = ''+Math.random().toString(36).substring(7)+'';
 const STORAGE_KEY_SECOND = ''+Math.random().toString(36).substring(7)+'';
@@ -210,12 +211,14 @@ export default class Home extends Component {
                     }}
                 >
                     <Button
+                        buttonStyle={{ backgroundColor: "#2C5077"}}
                         icon={
                             <Icon
                                 name="gps-fixed"
                                 size={20}
                                 color="white"
                             />
+
                         }
                         onPress={this._onPressCenter}
                     />

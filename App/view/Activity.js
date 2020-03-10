@@ -9,7 +9,7 @@ export default class Activity extends React.Component{
         super(props);
 
         this.state = {
-            data: [{id: 1, text: 'test'}, {id: 2, text: 'test2'}],
+            data: [],
             search: "",
             isLoading: false
         };
@@ -46,7 +46,6 @@ export default class Activity extends React.Component{
                     onRefresh={this.refreshCourses.bind(this)}
                     refreshing={this.state.isLoading}
                 />
-                <Button title="Refresh" onPress={this.refreshCourses} />
             </View>
         );
     }
