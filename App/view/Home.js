@@ -6,13 +6,14 @@ import { Button } from 'react-native-elements';
 import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
+import { Stopwatch } from 'react-native-stopwatch-timer';
 import CustomMaps from '../component/MapsView';
 
 
 import * as geolib from 'geolib';
 
-const STORAGE_KEY = ''+Math.random().toString(36).substring(7)+'';
-const STORAGE_KEY_SECOND = ''+Math.random().toString(36).substring(7)+'';
+const STORAGE_KEY_COORDINATES = 'COORDINATES';
+const STORAGE_KEY_STATS = 'STATS';
 
 export default class Home extends Component {
 
@@ -27,10 +28,16 @@ export default class Home extends Component {
         super(props);
 
         this.state = {
+            timestampStart:0,
+            stopwatchStart: false,
+            stopwatchReset: false,
+            stopwatchHistory: false,
+            startTimeBol : false,
+            startTime: 0,
             toggle: false,
             bottomMargin: 1,
             canStart : true,
-            appState : '',
+            appState: AppState.currentState,
             started : false,
             location: {},
             lastLocation : {},
@@ -40,11 +47,29 @@ export default class Home extends Component {
             routeCoordinates : null,
             totalDistance : null,
         };
+        this.toggleStopwatch = this.toggleStopwatch.bind(this);
+        this.resetStopwatch = this.resetStopwatch.bind(this);
+        this.getFormattedTime = this.getFormattedTime.bind(this);
     }
-    _startLoc = async () => {
-        await Location.startLocationUpdatesAsync('GetLocation', {
-            accuracy: Location.Accuracy.Highest,
-        });
+
+    toggleStopwatch() {
+        this.setState({stopwatchStart: !this.state.stopwatchStart,stopwatchHistory:true, stopwatchReset: false});
+    }
+
+    resetStopwatch() {
+        this.setState({stopwatchStart: false, stopwatchReset: true});
+    }
+
+    getFormattedTime(time) {
+        if (this.state.startTimeBol) {
+            time =
+            this.currentTime = time
+            console.log('new time',this.currentTime);
+        } else {
+            this.currentTime = time;
+            console.log('time',this.currentTime);
+        }
+
     };
     componentDidMount = async() => {
         AppState.addEventListener('change', this._handleAppStateChange);
@@ -54,15 +79,22 @@ export default class Home extends Component {
             }
         });
     }
-    _handleAppStateChange = async (nextAppState) => {
-        if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+    _handleAppStateChange = (nextAppState) => {
+        if (
+            this.state.appState.match(/inactive|background/) &&
+            nextAppState === 'active'
+        ) {
+            let time = (new Date().getTime() - this.state.timestampStart);
+            console.log(time/1000);
+            this.setState({startTime: time/1000,startTimeBol : true});
+
             console.log('App has come to the foreground!');
         }
-        // const dataFetch = await Home.getData(STORAGE_KEY);
-        // this.setState({appState: nextAppState,routeCoordinates: dataFetch});
+        this.setState({appState: nextAppState});
     };
-    // componentWillUnmount() {
-    // }
+    componentWillUnmount() {
+        AppState.removeEventListener('change', this._handleAppStateChange);
+    }
     findCurrentLocationAsync = async () => {
         let { status } = await Permissions.askAsync(Permissions.LOCATION);
         if (status !== 'granted') {
@@ -81,8 +113,8 @@ export default class Home extends Component {
             time = (region.nativeEvent.coordinate.timestamp/1000-this.state.location.timestamp/1000);
         }
         if (time >= 5) {
-            const dataFetch = await Home.getData(STORAGE_KEY);
-            const distance = await Home.getData(STORAGE_KEY_SECOND);
+            const dataFetch = await Home.getData(STORAGE_KEY_COORDINATES);
+            const distance = await Home.getData(STORAGE_KEY_STATS);
             if (dataFetch  && this.state.started) {
                 this.setState({routeCoordinates: dataFetch});
                 let distanceParsed = JSON.parse(distance);
@@ -98,14 +130,22 @@ export default class Home extends Component {
         const newState = !this.state.toggle;
         this.setState({toggle:newState});
         if (this.state.canStart && !this.state.toggle)  {
-            this.setState({started: true});
+            if (this.state.stopwatchHistory) {
+                this.resetStopwatch();
+            }
+            this.setState({started: true,timestampStart:new Date().getTime()});
             await Location.startLocationUpdatesAsync('GetLocation', {
                 accuracy: Location.Accuracy.Highest,
             });
+            this.toggleStopwatch();
+
             console.log('Start!');
         } else if (this.state.canStart && this.state.toggle){
+            this.toggleStopwatch();
             this.setState({started: false});
             await Location.stopLocationUpdatesAsync('GetLocation');
+            await AsyncStorage.removeItem(STORAGE_KEY_COORDINATES);
+            await AsyncStorage.removeItem(STORAGE_KEY_STATS);
             console.log('Stop!');
         }
     };
@@ -168,16 +208,16 @@ export default class Home extends Component {
                   </View>
                   <View style={{flex: 1, flexDirection: 'row',alignContent:'stretch',justifyContent:'center',alignItems: 'stretch', marginTop: 20}}>
                       <View style={{flex: 1, alignItems:'center'}} >
-                          <Text style={{fontSize: 24, fontWeight: 'bold'}}>00</Text>
+                          <Text style={{fontSize: 24, fontWeight: 'bold'}}>0</Text>
                           <Text style={{fontSize: 12}}>Rythme. moy. (km/h)</Text>
                       </View>
                       <View style={{flex: 1, alignItems:'center'}}>
-                          <Text style={{fontSize: 24, fontWeight: 'bold'}}>00:00</Text>
-                          <Text style={{fontSize: 12}}>Calories (cal)</Text>
+                          <Stopwatch start={this.state.stopwatchStart} startTime={11010000} reset={this.state.stopwatchReset} options={stopwatchoptions}/>
+                          <Text style={{fontSize: 12}}>Durée</Text>
                       </View>
                       <View style={{flex: 1, alignItems:'center'}}>
                           <Text style={{fontSize: 24, fontWeight: 'bold'}}>{distance}</Text>
-                          <Text style={{fontSize: 12}}>Distance (km)</Text>
+                          <Text style={{fontSize: 12}}>Distance (m)</Text>
                       </View>
                   </View>
                 </View>
@@ -243,6 +283,17 @@ export default class Home extends Component {
             </View>
         );
     }
+
+}
+const stopwatchoptions = {
+    container: {
+        backgroundColor: 'white',
+    },
+    text: {
+        fontSize: 24,
+        color: 'black',
+        fontWeight: 'bold'
+    }
 }
 if (!TaskManager.isTaskDefined('GetLocation')) {
     TaskManager.defineTask('GetLocation', async({data, error}) => {
@@ -252,23 +303,23 @@ if (!TaskManager.isTaskDefined('GetLocation')) {
         }
         if (data) {
             const dataStorage = [{latitude:data.locations[data.locations.length-1].coords.latitude,longitude:data.locations[data.locations.length-1].coords.longitude,timestamp:data.locations[data.locations.length-1].timestamp}];
-            const dataFetch = await Home.getData(STORAGE_KEY);
+            const dataFetch = await Home.getData(STORAGE_KEY_COORDINATES);
             if (dataFetch == null) {
-                await Home.setData(STORAGE_KEY,JSON.stringify(dataStorage));
+                await Home.setData(STORAGE_KEY_COORDINATES,JSON.stringify(dataStorage));
             } else {
                 let DataParse = JSON.parse(dataFetch);
                 let distance = geolib.getDistance(
                     { latitude: dataStorage[0].latitude, longitude : dataStorage[0].longitude },
                     { latitude: DataParse[DataParse.length-1].latitude, longitude: DataParse[DataParse.length-1].longitude }
                 );
-                const totaldistance = await Home.getData(STORAGE_KEY_SECOND);
-                if (totaldistance == null) {
-                    await Home.setData(STORAGE_KEY_SECOND, JSON.stringify(distance));
+                const dataStats = await Home.getData(STORAGE_KEY_STATS);
+                if (dataStats == null) {
+                    await Home.setData(STORAGE_KEY_STATS, JSON.stringify(distance));
                 } else {
-                    await Home.setData(STORAGE_KEY_SECOND, JSON.stringify(JSON.parse(totaldistance)+distance));
+                    await Home.setData(STORAGE_KEY_STATS, JSON.stringify(JSON.parse(dataStats)+distance));
                 }
-                await Home.setData(STORAGE_KEY,JSON.stringify(JSON.parse(dataFetch).concat(dataStorage)));
+                await Home.setData(STORAGE_KEY_COORDINATES,JSON.stringify(JSON.parse(dataFetch).concat(dataStorage)));
             }
         }
     })
-};
+}
