@@ -7,7 +7,6 @@ import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import { Stopwatch } from 'react-native-stopwatch-timer';
-import CustomMaps from '../component/MapsView';
 
 
 import * as geolib from 'geolib';
