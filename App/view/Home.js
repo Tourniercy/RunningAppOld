@@ -31,7 +31,6 @@ export default class Home extends Component {
             stopwatchStart: false,
             stopwatchReset: false,
             stopwatchHistory: false,
-            startTimeBol : false,
             startTime: 0,
             toggle: false,
             bottomMargin: 1,
@@ -40,11 +39,9 @@ export default class Home extends Component {
             started : false,
             location: {},
             lastLocation : {},
-            movedLocation :{},
             dragged : false,
             distance: 0,
             routeCoordinates : null,
-            totalDistance : null,
         };
         this.toggleStopwatch = this.toggleStopwatch.bind(this);
         this.resetStopwatch = this.resetStopwatch.bind(this);
@@ -58,17 +55,8 @@ export default class Home extends Component {
     resetStopwatch() {
         this.setState({stopwatchStart: false, stopwatchReset: true});
     }
-
     getFormattedTime(time) {
-        if (this.state.startTimeBol) {
-            time =
-            this.currentTime = time
-            console.log('new time',this.currentTime);
-        } else {
-            this.currentTime = time;
-            console.log('time',this.currentTime);
-        }
-
+        this.currentTime = time;
     };
     componentDidMount = async() => {
         AppState.addEventListener('change', this._handleAppStateChange);
@@ -78,16 +66,15 @@ export default class Home extends Component {
             }
         });
     }
-    _handleAppStateChange = (nextAppState) => {
+    _handleAppStateChange = async (nextAppState) => {
         if (
             this.state.appState.match(/inactive|background/) &&
             nextAppState === 'active'
         ) {
-            let time = (new Date().getTime() - this.state.timestampStart);
-            console.log(time/1000);
-            this.setState({startTime: time/1000,startTimeBol : true});
-
-            console.log('App has come to the foreground!');
+            let time = await (new Date().getTime() - this.state.timestampStart);
+            this.setState({startTime: time});
+            this.resetStopwatch();
+            this.toggleStopwatch();
         }
         this.setState({appState: nextAppState});
     };
@@ -137,11 +124,10 @@ export default class Home extends Component {
                 accuracy: Location.Accuracy.Highest,
             });
             this.toggleStopwatch();
-
             console.log('Start!');
         } else if (this.state.canStart && this.state.toggle){
             this.toggleStopwatch();
-            this.setState({started: false});
+            this.setState({started: false,startTime: 0});
             await Location.stopLocationUpdatesAsync('GetLocation');
             await AsyncStorage.removeItem(STORAGE_KEY_COORDINATES);
             await AsyncStorage.removeItem(STORAGE_KEY_STATS);
@@ -173,10 +159,10 @@ export default class Home extends Component {
         }
         if (this.state.location.coords) {
             if (this.state.lastLocation.latitude === undefined) {
-                    latitude = (this.state.location.coords.latitude);
-                    longitude = (this.state.location.coords.longitude);
-                    longitudeDelta = 0.02;
-                    latitudeDelta = 0.02;
+                latitude = (this.state.location.coords.latitude);
+                longitude = (this.state.location.coords.longitude);
+                longitudeDelta = 0.02;
+                latitudeDelta = 0.02;
             } else {
                 latitude = (this.state.lastLocation.latitude);
                 longitude = (this.state.lastLocation.longitude);
@@ -197,28 +183,28 @@ export default class Home extends Component {
         return (
             <View style={{flex:1}}>
                 <View style={{flex:1,backgroundColor:'white', padding: 10, paddingBottom: 20}}>
-                  <View style={{flex: 1, flexDirection: 'row',alignContent:'stretch',justifyContent:'center',alignItems: 'stretch',paddingTop:10}}>
-                      <View style={{flex: 1, width:50, alignItems:'center'}}>
-                          <Image
-                              style={{alignSelf: 'center', width: 50, height: 50}}
-                              source={require('../assets/img/Logo.png')}
-                          />
-                      </View>
-                  </View>
-                  <View style={{flex: 1, flexDirection: 'row',alignContent:'stretch',justifyContent:'center',alignItems: 'stretch', marginTop: 20}}>
-                      <View style={{flex: 1, alignItems:'center'}} >
-                          <Text style={{fontSize: 24, fontWeight: 'bold'}}>0</Text>
-                          <Text style={{fontSize: 12}}>Rythme. moy. (km/h)</Text>
-                      </View>
-                      <View style={{flex: 1, alignItems:'center'}}>
-                          <Stopwatch start={this.state.stopwatchStart} startTime={11010000} reset={this.state.stopwatchReset} options={stopwatchoptions}/>
-                          <Text style={{fontSize: 12}}>Durée</Text>
-                      </View>
-                      <View style={{flex: 1, alignItems:'center'}}>
-                          <Text style={{fontSize: 24, fontWeight: 'bold'}}>{distance}</Text>
-                          <Text style={{fontSize: 12}}>Distance (m)</Text>
-                      </View>
-                  </View>
+                    <View style={{flex: 1, flexDirection: 'row',alignContent:'stretch',justifyContent:'center',alignItems: 'stretch',paddingTop:10}}>
+                        <View style={{flex: 1, width:50, alignItems:'center'}}>
+                            <Image
+                                style={{alignSelf: 'center', width: 50, height: 50}}
+                                source={require('../assets/img/Logo.png')}
+                            />
+                        </View>
+                    </View>
+                    <View style={{flex: 1, flexDirection: 'row',alignContent:'stretch',justifyContent:'center',alignItems: 'stretch', marginTop: 20}}>
+                        <View style={{flex: 1, alignItems:'center'}} >
+                            <Text style={{fontSize: 24, fontWeight: 'bold'}}>0</Text>
+                            <Text style={{fontSize: 12}}>Rythme. moy. (km/h)</Text>
+                        </View>
+                        <View style={{flex: 1, alignItems:'center'}}>
+                            <Stopwatch start={this.state.stopwatchStart} startTime={this.state.startTime} getTime={this.getFormattedTime} reset={this.state.stopwatchReset} options={stopwatchoptions}/>
+                            <Text style={{fontSize: 12}}>Durée</Text>
+                        </View>
+                        <View style={{flex: 1, alignItems:'center'}}>
+                            <Text style={{fontSize: 24, fontWeight: 'bold'}}>{distance}</Text>
+                            <Text style={{fontSize: 12}}>Distance (m)</Text>
+                        </View>
+                    </View>
                 </View>
                 <MapView
                     ref={(ref) => this.ref = ref}
@@ -311,6 +297,7 @@ if (!TaskManager.isTaskDefined('GetLocation')) {
                     { latitude: dataStorage[0].latitude, longitude : dataStorage[0].longitude },
                     { latitude: DataParse[DataParse.length-1].latitude, longitude: DataParse[DataParse.length-1].longitude }
                 );
+                console.log(DataParse[0]);
                 const dataStats = await Home.getData(STORAGE_KEY_STATS);
                 if (dataStats == null) {
                     await Home.setData(STORAGE_KEY_STATS, JSON.stringify(distance));

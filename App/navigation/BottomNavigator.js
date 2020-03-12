@@ -5,6 +5,7 @@ import createBottomTabNavigator from "react-navigation-tabs/src/navigators/creat
 import Home from '../view/Home'
 import Icon from "react-native-vector-icons/FontAwesome5";
 import Activity from "../view/Activity";
+import { fromLeft } from 'react-navigation-transitions';
 
 export default class BottomNavigator extends React.Component {
     render() {
@@ -38,7 +39,7 @@ class ProfileScreen extends React.Component {
 
 const bottomTabNavigator = createBottomTabNavigator(
     {
-        Activity: {
+        Activités: {
             screen: Activity,
             navigationOptions: {
                 tabBarIcon: ({ tintColor }) => (
@@ -64,10 +65,10 @@ const bottomTabNavigator = createBottomTabNavigator(
         },
     },
     {
-        initialRouteName: 'Course',
+        initialRouteName: 'Activités',
         tabBarOptions: {
             activeTintColor: '#2C5077'
-        }
+        },
     }
 );
 

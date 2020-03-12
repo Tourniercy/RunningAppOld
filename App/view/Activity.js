@@ -65,9 +65,9 @@ export default class Activity extends React.Component{
         return (
             <View style={{flex: 1}}>
                 <View style={{flex: 1, flexDirection: 'row',alignContent:'stretch',paddingTop:10}}>
-                        <Text style={{fontSize: 20, fontWeight: 'bold',textAlign:'left',marginLeft: 20}}>ACTIVITES</Text>
+                    <Text style={{fontSize: 20, fontWeight: 'bold',textAlign:'left',marginLeft: 20}}>ACTIVITÉS</Text>
                 </View>
-                <View style={{flex:8}}>
+                <View style={{flex:12}}>
                     <NavigationEvents
                         onDidFocus={() => this.refreshCourses()}
                     />
@@ -77,7 +77,7 @@ export default class Activity extends React.Component{
                         keyExtractor={(item, index) => index.toString()}
                         onRefresh={this.refreshCourses.bind(this)}
                         refreshing={this.state.isLoading}
-                />
+                    />
                 </View>
             </View>
         );
