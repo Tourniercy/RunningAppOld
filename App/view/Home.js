@@ -1,6 +1,6 @@
 import {AsyncStorage, Text, View,AppState,Image} from 'react-native';
 import React, {Component} from 'react';
-import MapView, {Polyline} from "react-native-maps";
+import MapView, {Polyline,Marker} from "react-native-maps";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Button } from 'react-native-elements';
 import * as Permissions from 'expo-permissions';
@@ -42,10 +42,21 @@ export default class Home extends Component {
             dragged : false,
             distance: 0,
             routeCoordinates : null,
+            markers: []
         };
         this.toggleStopwatch = this.toggleStopwatch.bind(this);
         this.resetStopwatch = this.resetStopwatch.bind(this);
         this.getFormattedTime = this.getFormattedTime.bind(this);
+        const markers = [
+            {
+                latitude: 45.65,
+                longitude: -78.90,
+                title: 'Foo Place',
+                subtitle: '1234 Foo Drive'
+
+            }
+        ];
+
     }
 
     toggleStopwatch() {
@@ -114,7 +125,7 @@ export default class Home extends Component {
     };
     _onPressStopStart = async () => {
         const newState = !this.state.toggle;
-        this.setState({toggle:newState});
+        this.setState({toggle:newState,markers: []});
         if (this.state.canStart && !this.state.toggle)  {
             if (this.state.stopwatchHistory) {
                 this.resetStopwatch();
@@ -127,7 +138,24 @@ export default class Home extends Component {
             console.log('Start!');
         } else if (this.state.canStart && this.state.toggle){
             this.toggleStopwatch();
-            this.setState({started: false,startTime: 0});
+            let markers = [{
+                title: 'hello',
+                image:'../assets/img/button_green.png',
+                coordinates: {
+                    latitude: 43.663380499999995,
+                    longitude: -1.0873644
+                },
+            },
+                {
+                    title: 'hello',
+                    image:'../assets/img/button_green.png',
+                    coordinates: {
+                        latitude: 3.149771,
+                        longitude: 101.655449
+                    },
+
+                }]
+            this.setState({started: false,startTime: 0,markers :markers});
             await Location.stopLocationUpdatesAsync('GetLocation');
             await AsyncStorage.removeItem(STORAGE_KEY_COORDINATES);
             await AsyncStorage.removeItem(STORAGE_KEY_STATS);
@@ -223,6 +251,14 @@ export default class Home extends Component {
                     onUserLocationChange={this.onUserLocationChange}
                     onPanDrag={this.onPanDrag}
                 >
+                    {this.state.markers.map((marker, index) => (
+                        <Marker
+                            key = {index}
+                            coordinate={marker.coordinates}
+                            title={marker.title}
+                            image={require('../assets/img/button_green.png')}
+                        />
+                    ))}
                     <Polyline
                         coordinates={routeCoordinates}
                         strokeColor="blue" // fallback for when `strokeColors` is not supported by the map-provider
