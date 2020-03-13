@@ -47,15 +47,6 @@ export default class Home extends Component {
         this.toggleStopwatch = this.toggleStopwatch.bind(this);
         this.resetStopwatch = this.resetStopwatch.bind(this);
         this.getFormattedTime = this.getFormattedTime.bind(this);
-        const markers = [
-            {
-                latitude: 45.65,
-                longitude: -78.90,
-                title: 'Foo Place',
-                subtitle: '1234 Foo Drive'
-
-            }
-        ];
 
     }
 
@@ -82,10 +73,12 @@ export default class Home extends Component {
             this.state.appState.match(/inactive|background/) &&
             nextAppState === 'active'
         ) {
-            let time = await (new Date().getTime() - this.state.timestampStart);
-            this.setState({startTime: time});
-            this.resetStopwatch();
-            this.toggleStopwatch();
+            if (this.state.started) {
+                let time = await (new Date().getTime() - this.state.timestampStart);
+                this.setState({startTime: time});
+                this.resetStopwatch();
+                this.toggleStopwatch();
+            }
         }
         this.setState({appState: nextAppState});
     };
@@ -109,18 +102,16 @@ export default class Home extends Component {
         } else {
             time = (region.nativeEvent.coordinate.timestamp/1000-this.state.location.timestamp/1000);
         }
-        if (time >= 5) {
+        if (time >= 2 && this.state.started) {
             const dataFetch = await Home.getData(STORAGE_KEY_COORDINATES);
             const distance = await Home.getData(STORAGE_KEY_STATS);
-            if (dataFetch  && this.state.started) {
+            if (dataFetch) {
                 this.setState({routeCoordinates: dataFetch});
                 let distanceParsed = JSON.parse(distance);
+                console.log('distance',distanceParsed);
                 let dataFetchParsed = JSON.parse(dataFetch);
                 this.setState({lastLocation : dataFetchParsed[dataFetchParsed.length-1],distance: distanceParsed});
-            } else if (!this.state.started) {
-                // console.log(region);
             }
-
         }
     };
     _onPressStopStart = async () => {
@@ -138,25 +129,24 @@ export default class Home extends Component {
             console.log('Start!');
         } else if (this.state.canStart && this.state.toggle){
             this.toggleStopwatch();
+            await Location.stopLocationUpdatesAsync('GetLocation');
+            const dataFetch = JSON.parse(await Home.getData(STORAGE_KEY_COORDINATES));
             let markers = [{
-                title: 'hello',
-                image:'../assets/img/button_green.png',
+                image:require('../assets/img/button_green.png'),
                 coordinates: {
-                    latitude: 43.663380499999995,
-                    longitude: -1.0873644
+                    latitude: dataFetch[0].latitude,
+                    longitude: dataFetch[0].longitude
                 },
             },
                 {
-                    title: 'hello',
-                    image:'../assets/img/button_green.png',
+                    image:require('../assets/img/button_red.png'),
                     coordinates: {
-                        latitude: 3.149771,
-                        longitude: 101.655449
+                        latitude: dataFetch[dataFetch.length-1].latitude,
+                        longitude: dataFetch[dataFetch.length-1].longitude
                     },
 
                 }]
             this.setState({started: false,startTime: 0,markers :markers});
-            await Location.stopLocationUpdatesAsync('GetLocation');
             await AsyncStorage.removeItem(STORAGE_KEY_COORDINATES);
             await AsyncStorage.removeItem(STORAGE_KEY_STATS);
             console.log('Stop!');
@@ -181,7 +171,6 @@ export default class Home extends Component {
 
         let routeCoordinates= [];
         let distance = 0;
-        // console.log(this.ref);
         if (this.state.error) {
             text = this.state.error;
         }
@@ -256,7 +245,7 @@ export default class Home extends Component {
                             key = {index}
                             coordinate={marker.coordinates}
                             title={marker.title}
-                            image={require('../assets/img/button_green.png')}
+                            image={marker.image}
                         />
                     ))}
                     <Polyline
@@ -323,6 +312,7 @@ if (!TaskManager.isTaskDefined('GetLocation')) {
             return;
         }
         if (data) {
+            console.log(data);
             const dataStorage = [{latitude:data.locations[data.locations.length-1].coords.latitude,longitude:data.locations[data.locations.length-1].coords.longitude,timestamp:data.locations[data.locations.length-1].timestamp}];
             const dataFetch = await Home.getData(STORAGE_KEY_COORDINATES);
             if (dataFetch == null) {
@@ -333,8 +323,15 @@ if (!TaskManager.isTaskDefined('GetLocation')) {
                     { latitude: dataStorage[0].latitude, longitude : dataStorage[0].longitude },
                     { latitude: DataParse[DataParse.length-1].latitude, longitude: DataParse[DataParse.length-1].longitude }
                 );
-                console.log(DataParse[0]);
                 const dataStats = await Home.getData(STORAGE_KEY_STATS);
+                if (DataParse.length-2) {
+                    let TotalTime = (data.locations[data.locations.length-1].timestamp-DataParse[0].timestamp)/1000;
+                    let TimeBetweenTwo = (data.locations[data.locations.length-1].timestamp-DataParse[DataParse.length-1].timestamp)/1000;
+
+                    console.log('Actual speed',(data.locations[data.locations.length-1].coords.speed*3.6).toFixed(2));
+                    console.log('Average speed',)
+                }
+                console.log({distance:distance,speed:10})
                 if (dataStats == null) {
                     await Home.setData(STORAGE_KEY_STATS, JSON.stringify(distance));
                 } else {
