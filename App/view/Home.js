@@ -108,7 +108,7 @@ export default class Home extends Component {
             if (dataFetch) {
                 this.setState({routeCoordinates: dataFetch});
                 let distanceParsed = JSON.parse(distance);
-                console.log('distance',distanceParsed);
+                // console.log('distance',distanceParsed);
                 let dataFetchParsed = JSON.parse(dataFetch);
                 this.setState({lastLocation : dataFetchParsed[dataFetchParsed.length-1],distance: distanceParsed});
             }
@@ -327,11 +327,12 @@ if (!TaskManager.isTaskDefined('GetLocation')) {
                 if (DataParse.length-2) {
                     let TotalTime = (data.locations[data.locations.length-1].timestamp-DataParse[0].timestamp)/1000;
                     let TimeBetweenTwo = (data.locations[data.locations.length-1].timestamp-DataParse[DataParse.length-1].timestamp)/1000;
-
+                    console.log('Total time',TotalTime);
                     console.log('Actual speed',(data.locations[data.locations.length-1].coords.speed*3.6).toFixed(2));
-                    console.log('Average speed',)
+                    console.log('Average speed',((dataStats+distance)/TotalTime)*3.6);
+                    console.log('Distance tottal',dataStats,distance)
                 }
-                console.log({distance:distance,speed:10})
+                // console.log({distance:distance,speed:10})
                 if (dataStats == null) {
                     await Home.setData(STORAGE_KEY_STATS, JSON.stringify(distance));
                 } else {
