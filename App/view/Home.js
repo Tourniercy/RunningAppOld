@@ -40,7 +40,7 @@ export default class Home extends Component {
             location: {},
             lastLocation : {},
             dragged : false,
-            stats: [],
+            stats: [{distance:0,speed:0}],
             routeCoordinates : null,
             markers: []
         };
@@ -53,7 +53,6 @@ export default class Home extends Component {
     toggleStopwatch() {
         this.setState({stopwatchStart: !this.state.stopwatchStart,stopwatchHistory:true, stopwatchReset: false});
     }
-
     resetStopwatch() {
         this.setState({stopwatchStart: false, stopwatchReset: true});
     }
@@ -76,6 +75,7 @@ export default class Home extends Component {
             nextAppState === 'active'
         ) {
             if (this.state.started) {
+                this.onUserLocationChange(null,2)
                 let time = await (new Date().getTime() - this.state.timestampStart);
                 this.setState({startTime: time});
                 this.resetStopwatch();
@@ -99,28 +99,28 @@ export default class Home extends Component {
         }
 
     };
-    onUserLocationChange = async (region) => {
-        let time = '';
-        if (this.state.lastLocation.timestamp) {
-            time = (region.nativeEvent.coordinate.timestamp/1000-this.state.lastLocation.timestamp/1000);
-        } else {
-            time = (region.nativeEvent.coordinate.timestamp/1000-this.state.location.timestamp/1000);
+    onUserLocationChange = async (region,time) => {
+        if (time !== 2) {
+            if (this.state.lastLocation.timestamp) {
+                time = (region.nativeEvent.coordinate.timestamp/1000-this.state.lastLocation.timestamp/1000);
+            } else {
+                time = (region.nativeEvent.coordinate.timestamp/1000-this.state.location.timestamp/1000);
+            }
         }
         if (time >= 2 && this.state.started) {
             const dataFetch = await Home.getData(STORAGE_KEY_COORDINATES);
             const dataStats = await Home.getData(STORAGE_KEY_STATS);
-            if (dataFetch) {
-                this.setState({routeCoordinates: dataFetch});
+            if (dataFetch && dataStats) {
                 let dataStatsParsed = JSON.parse(dataStats);
-                // console.log('distance',distanceParsed);
                 let dataFetchParsed = JSON.parse(dataFetch);
-                this.setState({lastLocation : dataFetchParsed[dataFetchParsed.length-1],stats: dataStatsParsed});
+                this.setState({routeCoordinates: dataFetchParsed,lastLocation : dataFetchParsed[dataFetchParsed.length-1],stats: dataStatsParsed});
             }
+
         }
     };
     _onPressStopStart = async () => {
         const newState = !this.state.toggle;
-        this.setState({toggle:newState,markers: []});
+        this.setState({toggle:newState,markers: [],stats:[{distance:0,speed:0}]});
         if (this.state.canStart && !this.state.toggle)  {
             if (this.state.stopwatchHistory) {
                 this.resetStopwatch();
@@ -172,9 +172,9 @@ export default class Home extends Component {
         let longitude = 0;
         let longitudeDelta = 0;
         let latitudeDelta = 0;
-
         let routeCoordinates= [];
-        let stats = [];
+        let distance = this.state.stats[0].distance;
+        let speed = this.state.stats[0].speed;
         if (this.state.error) {
             text = this.state.error;
         }
@@ -197,9 +197,7 @@ export default class Home extends Component {
                 latitudeDelta = null;
             }
             if (this.state.routeCoordinates != null) {
-                routeCoordinates = JSON.parse(this.state.routeCoordinates);
-                stats = this.state.stats;
-                console.log('stats',stats);
+                routeCoordinates = this.state.routeCoordinates;
             }
         }
         return (
@@ -215,7 +213,7 @@ export default class Home extends Component {
                     </View>
                     <View style={{flex: 1, flexDirection: 'row',alignContent:'stretch',justifyContent:'center',alignItems: 'stretch', marginTop: 20}}>
                         <View style={{flex: 1, alignItems:'center'}} >
-                            <Text style={{fontSize: 24, fontWeight: 'bold'}}>0</Text>
+                            <Text style={{fontSize: 24, fontWeight: 'bold'}}>{speed}</Text>
                             <Text style={{fontSize: 12}}>Rythme. moy. (km/h)</Text>
                         </View>
                         <View style={{flex: 1, alignItems:'center'}}>
@@ -223,7 +221,7 @@ export default class Home extends Component {
                             <Text style={{fontSize: 12}}>Durée</Text>
                         </View>
                         <View style={{flex: 1, alignItems:'center'}}>
-                            {(stats[0].distance != undefined) && <Text style={{fontSize: 24, fontWeight: 'bold'}}>Test</Text>}
+                           <Text style={{fontSize: 24, fontWeight: 'bold'}}>{distance}</Text>
                             <Text style={{fontSize: 12}}>Distance (m)</Text>
                         </View>
                     </View>

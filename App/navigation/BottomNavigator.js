@@ -65,7 +65,7 @@ const bottomTabNavigator = createBottomTabNavigator(
         },
     },
     {
-        initialRouteName: 'Activités',
+        initialRouteName: 'Course',
         tabBarOptions: {
             activeTintColor: '#2C5077'
         },
