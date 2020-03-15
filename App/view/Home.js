@@ -312,33 +312,34 @@ if (!TaskManager.isTaskDefined('GetLocation')) {
             return;
         }
         if (data) {
-            console.log(data);
-            const dataStorage = [{latitude:data.locations[data.locations.length-1].coords.latitude,longitude:data.locations[data.locations.length-1].coords.longitude,timestamp:data.locations[data.locations.length-1].timestamp}];
-            const dataFetch = await Home.getData(STORAGE_KEY_COORDINATES);
-            if (dataFetch == null) {
-                await Home.setData(STORAGE_KEY_COORDINATES,JSON.stringify(dataStorage));
+            const currentCoordinates = [{latitude:data.locations[data.locations.length-1].coords.latitude,longitude:data.locations[data.locations.length-1].coords.longitude,timestamp:data.locations[data.locations.length-1].timestamp}];
+            const pastCoordinates = await Home.getData(STORAGE_KEY_COORDINATES);
+            if (pastCoordinates == null) {
+                await Home.setData(STORAGE_KEY_COORDINATES,JSON.stringify(currentCoordinates));
             } else {
-                let DataParse = JSON.parse(dataFetch);
+                let DataParse = JSON.parse(pastCoordinates);
                 let distance = geolib.getDistance(
-                    { latitude: dataStorage[0].latitude, longitude : dataStorage[0].longitude },
+                    { latitude: currentCoordinates[0].latitude, longitude : currentCoordinates[0].longitude },
                     { latitude: DataParse[DataParse.length-1].latitude, longitude: DataParse[DataParse.length-1].longitude }
                 );
                 const dataStats = await Home.getData(STORAGE_KEY_STATS);
-                if (DataParse.length-2) {
                     let TotalTime = (data.locations[data.locations.length-1].timestamp-DataParse[0].timestamp)/1000;
                     let TimeBetweenTwo = (data.locations[data.locations.length-1].timestamp-DataParse[DataParse.length-1].timestamp)/1000;
                     console.log('Total time',TotalTime);
                     console.log('Actual speed',(data.locations[data.locations.length-1].coords.speed*3.6).toFixed(2));
                     console.log('Average speed',((dataStats+distance)/TotalTime)*3.6);
                     console.log('Distance tottal',dataStats,distance)
-                }
-                // console.log({distance:distance,speed:10})
+                    console.log({distance:dataStats+distance,
+                        avgspeed:(((dataStats+distance)/TotalTime)*3.6).toFixed(2),
+                        speed:(data.locations[data.locations.length-1].coords.speed*3.6).toFixed(2)})
+
                 if (dataStats == null) {
                     await Home.setData(STORAGE_KEY_STATS, JSON.stringify(distance));
                 } else {
-                    await Home.setData(STORAGE_KEY_STATS, JSON.stringify(JSON.parse(dataStats)+distance));
+                    let dataStatss= [{distance:dataStats+distance,avgspeed:(((dataStats+distance)/TotalTime)*3.6).toFixed(2),speed:(data.locations[data.locations.length-1].coords.speed*3.6).toFixed(2)}]
+                    await Home.setData(STORAGE_KEY_STATS, JSON.stringify(dataStats));
                 }
-                await Home.setData(STORAGE_KEY_COORDINATES,JSON.stringify(JSON.parse(dataFetch).concat(dataStorage)));
+                await Home.setData(STORAGE_KEY_COORDINATES,JSON.stringify(JSON.parse(pastCoordinates).concat(currentCoordinates)));
             }
         }
     })
