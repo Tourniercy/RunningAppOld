@@ -1,4 +1,4 @@
-import {AsyncStorage, Text, View,AppState,Image} from 'react-native';
+import {AsyncStorage, Text, View,AppState,Image,TouchableOpacity} from 'react-native';
 import React, {Component} from 'react';
 import MapView, {Polyline,Marker} from "react-native-maps";
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -42,7 +42,8 @@ export default class Home extends Component {
             dragged : false,
             stats: [{distance:0,speed:0}],
             routeCoordinates : null,
-            markers: []
+            markers: [],
+            mapSnapshot: null,
         };
         this.toggleStopwatch = this.toggleStopwatch.bind(this);
         this.resetStopwatch = this.resetStopwatch.bind(this);
@@ -162,7 +163,18 @@ export default class Home extends Component {
     _onPressCenter = async (coordinate) => {
         this.setState({dragged: false});
     };
-
+    takeSnapshot() {
+        this.map.takeSnapshot(
+            300,
+            300,
+            (err, data) => {
+                if (err) {
+                    console.log(err);
+                }
+                this.setState({ mapSnapshot: data });
+            }
+        );
+    }
     render() {
         let {toggle} = this.state;
         let textValue = toggle?"Terminer":"Démarrer";
@@ -227,7 +239,9 @@ export default class Home extends Component {
                     </View>
                 </View>
                 <MapView
-                    ref={(ref) => this.ref = ref}
+                    ref={ref => {
+                        this.map = ref;
+                    }}
                     showsMyLocationButton={ false }
                     showsUserLocation={ true }
                     style={{
@@ -292,7 +306,22 @@ export default class Home extends Component {
                         onPress={this._onPressStopStart}
                     />
                 </View>
-
+                <TouchableOpacity
+                    onPress={() => this.takeSnapshot()}
+                >
+                    <Text>Take snapshot</Text>
+                </TouchableOpacity>
+                {this.state.mapSnapshot && (
+                    <TouchableOpacity
+                        style={[styles.container, styles.overlay]}
+                        onPress={() => this.setState({ mapSnapshot: null })}
+                    >
+                        <Image
+                            source={{ uri: this.state.mapSnapshot.uri }}
+                            style={styles.mapSnapshot}
+                        />
+                    </TouchableOpacity>
+                )}
             </View>
         );
     }

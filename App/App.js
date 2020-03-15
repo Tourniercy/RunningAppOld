@@ -3,13 +3,14 @@ import {Platform, StatusBar, StyleSheet, SafeAreaView} from 'react-native';
 import Container from './navigation/Navigation';
 import BottomNavigation from './navigation/BottomNavigator'
 import Home from './view/Home';
+import Test from './test/MAP';
 
 
 export default class App extends Component {
     render() {
         return (
             <SafeAreaView style={styles.droidSafeArea}>
-                    <BottomNavigation />
+                    <Test />
             </SafeAreaView>
         );
     }
