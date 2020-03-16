@@ -7,8 +7,7 @@ import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import { Stopwatch } from 'react-native-stopwatch-timer';
-
-
+import ViewShot from "react-native-view-shot";
 import * as geolib from 'geolib';
 
 const STORAGE_KEY_COORDINATES = 'COORDINATES';
@@ -161,6 +160,9 @@ export default class Home extends Component {
     };
     _onPressCenter = async (coordinate) => {
         this.setState({dragged: false});
+        this.refs.viewShot.capture().then(uri => {
+            console.log("do something with ", uri);
+        });
     };
 
     render() {
@@ -226,12 +228,13 @@ export default class Home extends Component {
                         </View>
                     </View>
                 </View>
-                <MapView
+                <ViewShot ref="viewShot" options={{ format: "jpg", quality: 0.9,result:"base64" }} style={{flex:4}}>
+                    <MapView
                     ref={(ref) => this.ref = ref}
                     showsMyLocationButton={ false }
                     showsUserLocation={ true }
                     style={{
-                        flex: 4
+                        flex: 1
                     }}
                     region={{
                         latitude: latitude,
@@ -256,7 +259,8 @@ export default class Home extends Component {
                         strokeColor="blue" // fallback for when `strokeColors` is not supported by the map-provider
                         strokeWidth={5}
                     />
-                </MapView>
+                    </MapView>
+                </ViewShot>
                 <View
                     style={{
                         position: 'absolute',//use absolute position to show button on top of the map
