@@ -1,4 +1,4 @@
-import {AsyncStorage, Text, View,AppState,Image,TouchableOpacity} from 'react-native';
+import {AsyncStorage, Text, View,AppState,Image} from 'react-native';
 import React, {Component} from 'react';
 import MapView, {Polyline,Marker} from "react-native-maps";
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -41,8 +41,7 @@ export default class Home extends Component {
             dragged : false,
             stats: [{distance:0,speed:0}],
             routeCoordinates : null,
-            markers: [],
-            mapSnapshot: null,
+            markers: []
         };
         this.toggleStopwatch = this.toggleStopwatch.bind(this);
         this.resetStopwatch = this.resetStopwatch.bind(this);
@@ -165,18 +164,7 @@ export default class Home extends Component {
             console.log("do something with ", uri);
         });
     };
-    takeSnapshot() {
-        this.map.takeSnapshot(
-            300,
-            300,
-            (err, data) => {
-                if (err) {
-                    console.log(err);
-                }
-                this.setState({ mapSnapshot: data });
-            }
-        );
-    }
+
     render() {
         let {toggle} = this.state;
         let textValue = toggle?"Terminer":"Démarrer";
@@ -235,42 +223,42 @@ export default class Home extends Component {
                             <Text style={{fontSize: 12}}>Durée</Text>
                         </View>
                         <View style={{flex: 1, alignItems:'center'}}>
-                           <Text style={{fontSize: 24, fontWeight: 'bold'}}>{distance}</Text>
+                            <Text style={{fontSize: 24, fontWeight: 'bold'}}>{distance}</Text>
                             <Text style={{fontSize: 12}}>Distance (m)</Text>
                         </View>
                     </View>
                 </View>
                 <ViewShot ref="viewShot" options={{ format: "jpg", quality: 0.9,result:"base64" }} style={{flex:4}}>
                     <MapView
-                    ref={(ref) => this.ref = ref}
-                    showsMyLocationButton={ false }
-                    showsUserLocation={ true }
-                    style={{
-                        flex: 1
-                    }}
-                    region={{
-                        latitude: latitude,
-                        longitude: longitude,
-                        latitudeDelta: latitudeDelta,
-                        longitudeDelta: longitudeDelta
-                    }}
+                        ref={(ref) => this.ref = ref}
+                        showsMyLocationButton={ false }
+                        showsUserLocation={ true }
+                        style={{
+                            flex: 1
+                        }}
+                        region={{
+                            latitude: latitude,
+                            longitude: longitude,
+                            latitudeDelta: latitudeDelta,
+                            longitudeDelta: longitudeDelta
+                        }}
 
-                    onUserLocationChange={this.onUserLocationChange}
-                    onPanDrag={this.onPanDrag}
-                >
-                    {this.state.markers.map((marker, index) => (
-                        <Marker
-                            key = {index}
-                            coordinate={marker.coordinates}
-                            title={marker.title}
-                            image={marker.image}
+                        onUserLocationChange={this.onUserLocationChange}
+                        onPanDrag={this.onPanDrag}
+                    >
+                        {this.state.markers.map((marker, index) => (
+                            <Marker
+                                key = {index}
+                                coordinate={marker.coordinates}
+                                title={marker.title}
+                                image={marker.image}
+                            />
+                        ))}
+                        <Polyline
+                            coordinates={routeCoordinates}
+                            strokeColor="blue" // fallback for when `strokeColors` is not supported by the map-provider
+                            strokeWidth={5}
                         />
-                    ))}
-                    <Polyline
-                        coordinates={routeCoordinates}
-                        strokeColor="blue" // fallback for when `strokeColors` is not supported by the map-provider
-                        strokeWidth={5}
-                    />
                     </MapView>
                 </ViewShot>
                 <View
@@ -308,22 +296,7 @@ export default class Home extends Component {
                         onPress={this._onPressStopStart}
                     />
                 </View>
-                <TouchableOpacity
-                    onPress={() => this.takeSnapshot()}
-                >
-                    <Text>Take snapshot</Text>
-                </TouchableOpacity>
-                {this.state.mapSnapshot && (
-                    <TouchableOpacity
-                        style={[styles.container, styles.overlay]}
-                        onPress={() => this.setState({ mapSnapshot: null })}
-                    >
-                        <Image
-                            source={{ uri: this.state.mapSnapshot.uri }}
-                            style={styles.mapSnapshot}
-                        />
-                    </TouchableOpacity>
-                )}
+
             </View>
         );
     }
@@ -358,15 +331,15 @@ if (!TaskManager.isTaskDefined('GetLocation')) {
                     { latitude: currentCoordinates[0].latitude, longitude : currentCoordinates[0].longitude },
                     { latitude: pastCoordinatesParsed[pastCoordinatesParsed.length-1].latitude, longitude: pastCoordinatesParsed[pastCoordinatesParsed.length-1].longitude }
                 );
-                    let TotalTime = (data.locations[data.locations.length-1].timestamp-pastCoordinatesParsed[0].timestamp)/1000;
-                    let TimeBetweenTwo = (data.locations[data.locations.length-1].timestamp-pastCoordinatesParsed[pastCoordinatesParsed.length-1].timestamp)/1000;
-                    // console.log('Total time',TotalTime);
-                    // console.log('Actual speed',(data.locations[data.locations.length-1].coords.speed*3.6).toFixed(2));
-                    // console.log('Average speed',((pastStats+distance)/TotalTime)*3.6);
-                    // console.log('Distance tottal',pastStats,distance)
-                    // console.log({distance:pastStats+distance,
-                    //     avgspeed:(((pastStats+distance)/TotalTime)*3.6).toFixed(2),
-                    //     speed:(data.locations[data.locations.length-1].coords.speed*3.6).toFixed(2)})
+                let TotalTime = (data.locations[data.locations.length-1].timestamp-pastCoordinatesParsed[0].timestamp)/1000;
+                let TimeBetweenTwo = (data.locations[data.locations.length-1].timestamp-pastCoordinatesParsed[pastCoordinatesParsed.length-1].timestamp)/1000;
+                // console.log('Total time',TotalTime);
+                // console.log('Actual speed',(data.locations[data.locations.length-1].coords.speed*3.6).toFixed(2));
+                // console.log('Average speed',((pastStats+distance)/TotalTime)*3.6);
+                // console.log('Distance tottal',pastStats,distance)
+                // console.log({distance:pastStats+distance,
+                //     avgspeed:(((pastStats+distance)/TotalTime)*3.6).toFixed(2),
+                //     speed:(data.locations[data.locations.length-1].coords.speed*3.6).toFixed(2)})
 
                 if (pastStats == null) {
                     let Stats= [{distance:distance,avgspeed:(data.locations[data.locations.length-1].coords.speed).toFixed(2),speed:(data.locations[data.locations.length-1].coords.speed).toFixed(2)}]
