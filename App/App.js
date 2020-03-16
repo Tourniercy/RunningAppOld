@@ -9,7 +9,7 @@ export default class App extends Component {
     render() {
         return (
             <SafeAreaView style={styles.droidSafeArea}>
-                    <Home />
+                    <BottomNavigation />
             </SafeAreaView>
         );
     }
@@ -17,7 +17,7 @@ export default class App extends Component {
 const styles = StyleSheet.create({
     droidSafeArea: {
         flex: 1,
-        backgroundColor: '#2C5077',
+        backgroundColor: 'white',
         paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
     },
 });

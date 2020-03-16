@@ -107,14 +107,12 @@ export default class Home extends Component {
             }
         }
         if (time >= 2 && this.state.started) {
-            const dataFetch = await Home.getData(STORAGE_KEY_COORDINATES);
-            const dataStats = await Home.getData(STORAGE_KEY_STATS);
+            const dataFetch = JSON.parse(await Home.getData(STORAGE_KEY_COORDINATES));
+            const dataStats = JSON.parse(await Home.getData(STORAGE_KEY_STATS));
             if (dataFetch && dataStats) {
-                let dataStatsParsed = JSON.parse(dataStats);
-                let dataFetchParsed = JSON.parse(dataFetch);
-                this.setState({routeCoordinates: dataFetchParsed,lastLocation : dataFetchParsed[dataFetchParsed.length-1],stats: dataStatsParsed});
+                console.log(dataStats);
+                this.setState({routeCoordinates: dataFetch,lastLocation : dataFetch[dataFetch.length-1],stats: dataStats});
             }
-
         }
     };
     _onPressStopStart = async () => {
@@ -124,7 +122,7 @@ export default class Home extends Component {
             if (this.state.stopwatchHistory) {
                 this.resetStopwatch();
             }
-            this.setState({started: true,timestampStart:new Date().getTime()});
+            this.setState({started: true,timestampStart:new Date().getTime(),routeCoordinates:[]});
             await Location.startLocationUpdatesAsync('GetLocation', {
                 accuracy: Location.Accuracy.Highest,
             });
@@ -160,9 +158,14 @@ export default class Home extends Component {
     };
     _onPressCenter = async (coordinate) => {
         this.setState({dragged: false});
+        let location = await Location.getLastKnownPositionAsync();
+        this.setState({location: location});
+        console.log(this.ref);
         this.refs.viewShot.capture().then(uri => {
-            console.log("do something with ", uri);
+            console.log(uri);
         });
+        console.log(this.map);
+        let map = (this.map);
     };
 
     render() {
@@ -230,18 +233,21 @@ export default class Home extends Component {
                 </View>
                 <ViewShot ref="viewShot" options={{ format: "jpg", quality: 0.9,result:"base64" }} style={{flex:4}}>
                     <MapView
-                        ref={(ref) => this.ref = ref}
+                        ref={(map) => { this.map = map; }}
                         showsMyLocationButton={ false }
                         showsUserLocation={ true }
                         style={{
                             flex: 1
                         }}
-                        region={{
+                        region={latitude == null ?
+                            undefined :
+                            {
                             latitude: latitude,
                             longitude: longitude,
                             latitudeDelta: latitudeDelta,
                             longitudeDelta: longitudeDelta
-                        }}
+                        }
+                        }
 
                         onUserLocationChange={this.onUserLocationChange}
                         onPanDrag={this.onPanDrag}
