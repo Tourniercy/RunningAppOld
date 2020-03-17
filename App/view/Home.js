@@ -111,18 +111,18 @@ export default class Home extends Component {
             const dataStats = JSON.parse(await Home.getData(STORAGE_KEY_STATS));
             if (dataFetch && dataStats) {
                 console.log(dataStats);
-                this.setState({routeCoordinates: dataFetch,lastLocation : dataFetch[dataFetch.length-1],stats: dataStats});
+                this.setState({routeCoordinates: dataFetch,lastLocation : dataFetch[dataFetch.length-1],stats: dataStats,centered:false});
             }
         }
     };
     _onPressStopStart = async () => {
         const newState = !this.state.toggle;
-        this.setState({toggle:newState,markers: [],stats:[{distance:0,speed:0}]});
+        this.setState({toggle:newState,markers: []});
         if (this.state.canStart && !this.state.toggle)  {
             if (this.state.stopwatchHistory) {
                 this.resetStopwatch();
             }
-            this.setState({started: true,timestampStart:new Date().getTime(),routeCoordinates:[]});
+            this.setState({started: true,timestampStart:new Date().getTime(),routeCoordinates:[],stats:[{distance:0,speed:0}]});
             await Location.startLocationUpdatesAsync('GetLocation', {
                 accuracy: Location.Accuracy.Highest,
             });
@@ -147,7 +147,7 @@ export default class Home extends Component {
                     },
 
                 }]
-            this.setState({started: false,startTime: 0,markers :markers});
+            this.setState({started: false,startTime: 0,markers :markers,routeCoordinates: dataFetch});
             await AsyncStorage.removeItem(STORAGE_KEY_COORDINATES);
             await AsyncStorage.removeItem(STORAGE_KEY_STATS);
             console.log('Stop!');
@@ -157,15 +157,11 @@ export default class Home extends Component {
         this.setState({dragged: true});
     };
     _onPressCenter = async (coordinate) => {
-        this.setState({dragged: false});
         let location = await Location.getLastKnownPositionAsync();
-        this.setState({location: location});
-        console.log(this.ref);
+        this.setState({location: location,dragged: false,centered:true});
         this.refs.viewShot.capture().then(uri => {
-            console.log(uri);
+            // console.log(uri);
         });
-        console.log(this.map);
-        let map = (this.map);
     };
 
     render() {
@@ -184,7 +180,7 @@ export default class Home extends Component {
             text = this.state.error;
         }
         if (this.state.location.coords) {
-            if (this.state.lastLocation.latitude === undefined) {
+            if (this.state.lastLocation.latitude === undefined || this.state.centered) {
                 latitude = (this.state.location.coords.latitude);
                 longitude = (this.state.location.coords.longitude);
                 longitudeDelta = 0.02;
