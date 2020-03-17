@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 import {Platform, StatusBar, StyleSheet, SafeAreaView, AppRegistry} from 'react-native';
 import { createRootNavigator } from "./navigation/Navigation";
-import { NavigationContainer } from '@react-navigation/native';
 import { isSignedIn } from "./auth/Auth";
 
 export default class App extends Component {
