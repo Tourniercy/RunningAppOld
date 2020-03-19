@@ -58,6 +58,7 @@ export default class Home extends Component {
     getFormattedTime(time) {
         this.currentTime = time;
     };
+
     componentDidMount = async() => {
         await AsyncStorage.removeItem(STORAGE_KEY_COORDINATES);
         await AsyncStorage.removeItem(STORAGE_KEY_STATS);
@@ -67,7 +68,8 @@ export default class Home extends Component {
                 this.setState({canStart : true});
             }
         });
-    }
+    };
+
     _handleAppStateChange = async (nextAppState) => {
         if (
             this.state.appState.match(/inactive|background/) &&

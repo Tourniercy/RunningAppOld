@@ -23,6 +23,7 @@
     "formik": "^2.1.4",
     "geolib": "^3.2.1",
     "haversine": "^1.1.1",
+    "moment": "^2.24.0",
     "native-base": "^2.13.8",
     "react": "16.9.0",
     "react-devtools": "^3.6.3",
