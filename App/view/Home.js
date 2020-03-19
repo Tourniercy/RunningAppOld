@@ -6,7 +6,6 @@ import { Button } from 'react-native-elements';
 import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
-import CustomMaps from '../component/MapsView';
 
 
 import * as geolib from 'geolib';
@@ -46,6 +45,7 @@ export default class Home extends Component {
             accuracy: Location.Accuracy.Highest,
         });
     };
+
     componentDidMount = async() => {
         AppState.addEventListener('change', this._handleAppStateChange);
         this.findCurrentLocationAsync().then(() => {
@@ -53,7 +53,8 @@ export default class Home extends Component {
                 this.setState({canStart : true});
             }
         });
-    }
+    };
+
     _handleAppStateChange = async (nextAppState) => {
         if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
             console.log('App has come to the foreground!');
