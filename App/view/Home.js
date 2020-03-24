@@ -58,7 +58,6 @@ export default class Home extends Component {
     getFormattedTime(time) {
         this.currentTime = time;
     };
-
     componentDidMount = async() => {
         await AsyncStorage.removeItem(STORAGE_KEY_COORDINATES);
         await AsyncStorage.removeItem(STORAGE_KEY_STATS);
@@ -68,8 +67,7 @@ export default class Home extends Component {
                 this.setState({canStart : true});
             }
         });
-    };
-
+    }
     _handleAppStateChange = async (nextAppState) => {
         if (
             this.state.appState.match(/inactive|background/) &&
@@ -149,9 +147,6 @@ export default class Home extends Component {
                     },
 
                 }]
-            this.refs.viewShot.capture().then(uri => {
-                // console.log(uri);
-            });
             this.setState({started: false,startTime: 0,markers :markers,routeCoordinates: dataFetch});
             await AsyncStorage.removeItem(STORAGE_KEY_COORDINATES);
             await AsyncStorage.removeItem(STORAGE_KEY_STATS);
@@ -164,6 +159,9 @@ export default class Home extends Component {
     _onPressCenter = async (coordinate) => {
         let location = await Location.getLastKnownPositionAsync();
         this.setState({location: location,dragged: false,centered:true});
+        this.refs.viewShot.capture().then(uri => {
+            // console.log(uri);
+        });
     };
 
     render() {
