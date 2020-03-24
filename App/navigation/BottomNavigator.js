@@ -3,7 +3,9 @@ import { StyleSheet, Text, View } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import createBottomTabNavigator from "react-navigation-tabs/src/navigators/createBottomTabNavigator";
 import Home from '../view/Home'
-import Icon from "react-native-vector-icons/FontAwesome";
+import Icon from "react-native-vector-icons/FontAwesome5";
+import Activity from "../view/Activity";
+import { fromLeft } from 'react-navigation-transitions';
 
 export default class BottomNavigator extends React.Component {
     render() {
@@ -14,7 +16,7 @@ export default class BottomNavigator extends React.Component {
 }
 
 
-class ExploreScreen extends React.Component {
+/*class ExploreScreen extends React.Component {
     render() {
         return(
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#d0d0d0'}}>
@@ -22,7 +24,7 @@ class ExploreScreen extends React.Component {
             </View>
         );
     }
-}
+}*/
 
 
 class ProfileScreen extends React.Component {
@@ -37,11 +39,11 @@ class ProfileScreen extends React.Component {
 
 const bottomTabNavigator = createBottomTabNavigator(
     {
-        Activ: {
-            screen: ExploreScreen,
+        Activités: {
+            screen: Activity,
             navigationOptions: {
                 tabBarIcon: ({ tintColor }) => (
-                    <Icon name="search" size={25} color={tintColor} />
+                    <Icon name="list" size={25} color={tintColor} />
                 )
             }
         },
@@ -49,7 +51,7 @@ const bottomTabNavigator = createBottomTabNavigator(
             screen: Home,
             navigationOptions: {
                 tabBarIcon: ({ tintColor }) => (
-                    <Icon name="home" size={25} color={tintColor} />
+                    <Icon name="walking" size={25} color={tintColor} />
                 )
             }
         },
@@ -57,7 +59,7 @@ const bottomTabNavigator = createBottomTabNavigator(
             screen: ProfileScreen,
             navigationOptions: {
                 tabBarIcon: ({ tintColor }) => (
-                    <Icon name="user" size={25} color={tintColor} />
+                    <Icon name="user-alt" size={25} color={tintColor} />
                 )
             }
         },
@@ -65,8 +67,8 @@ const bottomTabNavigator = createBottomTabNavigator(
     {
         initialRouteName: 'Course',
         tabBarOptions: {
-            activeTintColor: '#5192eb'
-        }
+            activeTintColor: '#2C5077'
+        },
     }
 );
 
