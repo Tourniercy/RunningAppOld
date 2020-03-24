@@ -1,7 +1,6 @@
 import React,{Component} from 'react';
 import {View, Image, StyleSheet,TextInput,KeyboardAvoidingView} from 'react-native';
 import { Input, Button, Text } from 'react-native-elements';
-import { onSignIn } from "../auth/Auth";
 import { Formik } from 'formik';
 import * as yup from 'yup';
 
@@ -88,11 +87,7 @@ export class Login extends Component {
                                 title="Connexion"
                                 type="solid"
                                 color="#2C5077"
-                                // onPress={handleSubmit}
-                                onPress={() => {
-                                    // this.props.navigation.navigate('Home');
-                                    onSignIn().then(() => this.props.navigation.navigate('SignedIn'));
-                                }}
+                                onPress={handleSubmit}
                             />
                         </View>
                         <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
@@ -101,9 +96,12 @@ export class Login extends Component {
                                 titleStyle={{color:'#2C5077'}}
                                 title="Inscription"
                                 type="outline"
+                                //onPress={() => this.props.navigation.navigate('Home')}
                                 onPress={() => {
-                                    // this.props.navigation.navigate('Home');
-                                    onSignIn().then(() => this.props.navigation.navigate('SignedIn'));
+                                    this.props.navigation.navigate('Inscription', {
+                                        Login: 'Cyril',
+                                        Password: 'TEST',
+                                    });
                                 }}
                             />
                         </View>
