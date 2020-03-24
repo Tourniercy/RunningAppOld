@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import {Platform, StatusBar, StyleSheet, SafeAreaView, AppRegistry} from 'react-native';
 import { createRootNavigator } from "./navigation/Navigation";
 import { isSignedIn } from "./auth/Auth";
+import { SaveCourse } from "./functions/functions";
 
 export default class App extends Component {
     constructor(props) {
@@ -20,6 +21,9 @@ export default class App extends Component {
     }
 
     render() {
+        // return (
+        //     <SaveCourse/>
+        // );
         const { checkedSignIn, signedIn } = this.state;
 
         // If we haven't checked AsyncStorage yet, don't render anything (better ways to do this)

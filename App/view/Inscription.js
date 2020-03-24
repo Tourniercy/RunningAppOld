@@ -50,7 +50,7 @@ export class Inscription extends Component {
 		let birthDate = new Date(date)
 		let weight = parseInt(values.poids)
 
-		fetch(`http://192.168.43.242:8000/api/users`, {
+		fetch(`http://639f4182.ngrok.io/api/users`, {
 
 			method: 'POST',
 			headers: {

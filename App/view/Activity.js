@@ -1,10 +1,11 @@
-import React, {Component} from 'react';
-import {Text, View, TextInput, Button, FlatList, Image} from 'react-native';
+import React from 'react';
+import { View, Text } from 'react-native';
+import { createStackNavigator } from 'react-navigation-stack';
+import { createAppContainer } from 'react-navigation';
 import { NavigationEvents} from "react-navigation";
-import ListItems from "./ListItem";
+import FlatList, {ListItem} from "react-native-elements";
 
-export default class Activity extends React.Component{
-
+class ActivityScreen extends React.Component {
     constructor(props) {
         super(props);
 
@@ -15,8 +16,6 @@ export default class Activity extends React.Component{
         };
 
     }
-
-
     componentDidMount() {
     }
 
@@ -50,6 +49,19 @@ export default class Activity extends React.Component{
 
 
     render() {
+        let ListItems = ({ item }) => (
+            <ListItem
+                title={item.name}
+                subtitle={item.subtitle}
+                leftIcon={{ name: item.icon,color:"#2C5077" }}
+                rightSubtitle={item.rightSubtitle}
+                onPress={() => {alert('pressed')}}
+                containerStyle={{borderStyle:"solid",borderTopWidth:0.8}}
+                rightSubtitleStyle={{width:110}}
+                chevron={{ color: '#2C5077' }}
+
+            />
+        )
         const list = [
             {
                 name: 'Amy Farha',
@@ -72,15 +84,35 @@ export default class Activity extends React.Component{
                         onDidFocus={() => this.refreshCourses()}
                     />
                     <FlatList
-                        data={this.state.data}
-                        renderItem={({ item }) => <ListItems item={item} />}
-                        keyExtractor={(item, index) => index.toString()}
-                        onRefresh={this.refreshCourses.bind(this)}
-                        refreshing={this.state.isLoading}
+                        keyExtractor={this.keyExtractor}
+                        data={list}
+                        renderItem={this.renderItem}
                     />
                 </View>
             </View>
         );
     }
-
 }
+class ProfileScreen extends React.Component {
+    render() {
+        return (
+            <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                <Text>Details Screen</Text>
+            </View>
+        );
+    }
+}
+
+const AppNavigator = createStackNavigator(
+    {
+        ActivityScreen: ActivityScreen,
+        ProfileScreen: ProfileScreen
+    },
+    {
+        initialRouteName: "ActivityScreen"
+    }
+);
+
+export default createAppContainer(AppNavigator);
+
+
