@@ -182,6 +182,8 @@ export class Inscription extends Component {
 				keyboardVerticalOffset={10}
 			>
 
+				{/* Modal : Inscription réussit */}
+
 				<View style={{
 					backgroundColor: '#fff',
 					alignItems: 'center',
@@ -201,6 +203,8 @@ export class Inscription extends Component {
 					></SCLAlert>
 
 				</View>
+
+				{/* Modal : Erreur 500 */}
 
 				<View style={{
 					backgroundColor: '#fff',
@@ -225,6 +229,8 @@ export class Inscription extends Component {
 
 				</View>
 
+				{/* Modal : Adresse email déjà existant */}
+
 				<View style={{
 					backgroundColor: '#fff',
 					alignItems: 'center',
@@ -248,6 +254,7 @@ export class Inscription extends Component {
 
 				</View>
 
+				{/* Page Inscription */}
 
 				<ScrollView>
 
