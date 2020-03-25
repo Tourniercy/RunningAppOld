@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { TextInput, View, StyleSheet, KeyboardAvoidingView, ImageBackground, ScrollView } from 'react-native'
+import { TextInput, View, StyleSheet, KeyboardAvoidingView, ImageBackground, ScrollView, ActivityIndicator } from 'react-native'
 import { Button, Text, Icon, Badge } from 'react-native-elements'
 import { Formik } from 'formik'
 import * as yup from 'yup'
@@ -19,42 +19,58 @@ export class Inscription extends Component {
 			date: "",
 			show: false,
 			showError: false,
+			showErrorEmail: false,
+			loading: true,
 			user: '',
-			dummy: 1,
-			// users: null
+			usersEmail: []
 		}
 	}
 
 	componentDidMount() {
 
-		// fetch(`http://192.168.43.242:8000/api/users`, {
-		//
-		// 	method: 'GET',
-		// 	headers: {
-		// 		Accept: 'application/json',
-		// 		'Content-Type': 'application/json',
-		// 	}
-		// })
-		// 	.then(resp => {
-		// 		return resp.json()
-		// 	})
-		// 	.then(responseData => {
-		// 		this.setState({users: responseData})
-		// 	})
-		// 	.catch(err => {
-		// 		console.log(err)
-		// 	})
+		fetch(`http://398927b4.ngrok.io/api/users`, {
+
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+			}
+		})
+		.then(resp => {
+			return resp.json()
+		})
+		.then(responseData => {
+			responseData.map(x => { this.state.usersEmail.push(x.email) })
+			this.setState({loading: false})
+		})
+		.catch(err => {
+			console.log(err)
+		})
 	}
 
 	async registerCall(values) {
 
-		// this.state.users.map(x => { console.log(x) })
+		this.setState({loading: true})
+
+		let { usersEmail } = this.state
+
+		let check = usersEmail.map(x => {
+
+			if (x === values.email) {
+				return false
+			}
+		})
+
+		if (check === false) {
+			this.setState({showErrorEmail: true})
+			this.setState({loading: false})
+		}
 
 		let date = values.birthDate.replace('/', '-').replace('/', '-') + "T00:00:00"
 		let birthDate = new Date(date)
 		let weight = parseInt(values.poids)
 
-		fetch(`http://c3f47f4f.ngrok.io/api/users`, {
+		fetch(`http://398927b4.ngrok.io/api/users`, {
 
 			method: 'POST',
 			headers: {
@@ -84,6 +100,7 @@ export class Inscription extends Component {
 			.then((data) => {
 
 				if (data) {
+					this.setState({loading: false})
 					this.setState({user: data.firstname})
 					this.setState({ show:true })
 					setTimeout(() => {
@@ -99,10 +116,8 @@ export class Inscription extends Component {
 
 	handleClose = () => {
 		this.setState({ show: false })
-	}
-
-	refreshPage = () => {
-		this.setState({dummy: 1})
+		this.setState({ showError: false })
+		this.setState({ showErrorEmail: false })
 	}
 
 	render() {
@@ -111,19 +126,23 @@ export class Inscription extends Component {
 
 			email: yup.string()
 				.label('Email')
+				.strict()
+				.lowercase('Majuscules non valides')
 				.email('Veuillez entrer un email valide')
 				.ensure()
-				.lowercase()
-				.required('Champ obligatoire'),
+				.required('Champ obligatoire')
+				.notOneOf(this.state.usersEmail, 'Adresse email déjà existant'),
 
 			password: yup.string()
 				.label('Password')
 				.required('Champ obligatoire')
-				.min(6, 'Minimum 6 caractères'),
+				.min(6, 'Minimum 6 caractères')
+				.matches(/^\S+$/, 'Espaces non autorisés'),
 
 			passwordVerify: yup.string()
 				.label('Password verify')
 				.required('Champ obligatoire')
+				.matches(/^\S+$/, 'Espaces non autorisés')
 				.oneOf([yup.ref('password'), null], 'La vérification a échouée'),
 
 			prenom: yup.string()
@@ -194,13 +213,36 @@ export class Inscription extends Component {
 						onRequestClose={this.handleClose}
 						theme="danger"
 						title="Erreur"
+						subtitle="Un problème est survenu sur le serveur, veuillez réessayer !"
+						headerIconComponent={<Ionicons name="ios-alert" size={70} color="white" />}
+						titleStyle={{ fontSize: 30 }}
+						subtitleStyle={{ fontSize: 18}}
+					>
+
+						<SCLAlertButton theme="danger" onPress={this.handleClose}>Réessayer</SCLAlertButton>
+
+					</SCLAlert>
+
+				</View>
+
+				<View style={{
+					backgroundColor: '#fff',
+					alignItems: 'center',
+					justifyContent: 'center'
+				}}>
+
+					<SCLAlert
+						show={this.state.showErrorEmail}
+						onRequestClose={this.handleClose}
+						theme="danger"
+						title="Erreur"
 						subtitle="L' addresse email que vous avez entré existe déjà !"
 						headerIconComponent={<Ionicons name="ios-alert" size={70} color="white" />}
 						titleStyle={{ fontSize: 30 }}
 						subtitleStyle={{ fontSize: 18}}
 					>
 
-						<SCLAlertButton theme="danger" onPress={this.refreshPage}>Réessayer</SCLAlertButton>
+						<SCLAlertButton theme="danger" onPress={this.handleClose}>Retour</SCLAlertButton>
 
 					</SCLAlert>
 
@@ -593,8 +635,14 @@ export class Inscription extends Component {
 								</View>
 							)}
 						</Formik>
+						<View style={{ flex : 1 }} />
 					</View>
 				</ScrollView>
+
+				<View style={[(this.state.loading) ? styles.loading : '']}>
+					<ActivityIndicator size={50} color="brown" animating={this.state.loading}/>
+				</View>
+
 			</KeyboardAvoidingView>
 		)
 	}
@@ -638,7 +686,8 @@ const styles = StyleSheet.create({
 
 	keyboard: {
 
-		marginBottom: 0
+		marginBottom: 0,
+		paddingBottom: 0
 	},
 
 	headerLogo: {
@@ -668,6 +717,18 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		backgroundColor: '#fff',
 	},
+
+	loading: {
+		position: 'absolute',
+		left: 0,
+		right: 0,
+		top: 0,
+		bottom: 0,
+		alignItems: 'center',
+		justifyContent: 'center',
+		backgroundColor: 'rgba(255,255,255, 0.8)',
+
+	}
 
 })
 
