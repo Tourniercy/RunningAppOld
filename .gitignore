@@ -3,3 +3,4 @@ App/node_modules
 .idea
 App/.expo
 package-lock.json
+.DS_Store

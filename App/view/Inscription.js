@@ -20,28 +20,34 @@ export class Inscription extends Component {
 			show: false,
 			showError: false,
 			showErrorEmail: false,
-			loading: true,
+			loading: false,
 			user: '',
-			usersEmail: []
+			emailCheck: ''
 		}
 	}
 
-	componentDidMount() {
+	async emailCheck(values) {
 
-		fetch(`http://398927b4.ngrok.io/api/users`, {
+		this.setState({loading: true})
 
-			method: 'GET',
+		fetch(`http://d2714e36.ngrok.io/users/check/`+ values.email, {
+
+			method: 'POST',
 			headers: {
 				Accept: 'application/json',
 				'Content-Type': 'application/json',
 			}
 		})
-		.then(resp => {
-			return resp.json()
+		.then(async resp => {
+			if (resp.status === 302) {
+				return resp.json()
+			}
 		})
 		.then(responseData => {
-			responseData.map(x => { this.state.usersEmail.push(x.email) })
-			this.setState({loading: false})
+			if (responseData) {
+				this.setState({emailCheck: responseData.email})
+			}
+			this.registerCall(values)
 		})
 		.catch(err => {
 			console.log(err)
@@ -50,27 +56,22 @@ export class Inscription extends Component {
 
 	async registerCall(values) {
 
-		this.setState({loading: true})
+		let { emailCheck } = this.state
+		let check
 
-		let { usersEmail } = this.state
-
-		let check = usersEmail.map(x => {
-
-			if (x === values.email) {
-				return false
-			}
-		})
+		if (emailCheck === values.email) {
+			check = false
+		} else {
+			check = true
+		}
 
 		if (check === false) {
 			this.setState({showErrorEmail: true})
 			this.setState({loading: false})
+			return false
 		}
 
-		let date = values.birthDate.replace('/', '-').replace('/', '-') + "T00:00:00"
-		let birthDate = new Date(date)
-		let weight = parseInt(values.poids)
-
-		fetch(`http://398927b4.ngrok.io/api/users`, {
+		fetch(`http://d2714e36.ngrok.io/signup`, {
 
 			method: 'POST',
 			headers: {
@@ -81,8 +82,8 @@ export class Inscription extends Component {
 				"firstname": values.prenom,
 				"lastname": values.nom,
 				"email": values.email,
-				"birthDate": birthDate,
-				"weight": weight,
+				"birthDate": values.birthDate,
+				"weight": parseInt(values.poids),
 				"password": values.password,
 			})
 
@@ -104,12 +105,13 @@ export class Inscription extends Component {
 					this.setState({user: data.firstname})
 					this.setState({ show:true })
 					setTimeout(() => {
-						this.setState({ show:false })
+						// this.setState({ show:false })
 						this.props.navigation.navigate('SignIn');
 					}, 2000)
 				}
 			})
 			.catch(err => {
+				console.log(err)
 				this.setState({showError: true})
 			})
 	}
@@ -130,8 +132,7 @@ export class Inscription extends Component {
 				.lowercase('Majuscules non valides')
 				.email('Veuillez entrer un email valide')
 				.ensure()
-				.required('Champ obligatoire')
-				.notOneOf(this.state.usersEmail, 'Adresse email déjà existant'),
+				.required('Champ obligatoire'),
 
 			password: yup.string()
 				.label('Password')
@@ -177,9 +178,8 @@ export class Inscription extends Component {
 
 			<KeyboardAvoidingView
 				contentContainerStyle={styles.keyboard}
-				behavior={"padding"}
-				enabled
-				keyboardVerticalOffset={10}
+				behavior={"height"}
+				keyboardVerticalOffset={-10}
 			>
 
 				{/* Modal : Inscription réussit */}
@@ -218,7 +218,7 @@ export class Inscription extends Component {
 						theme="danger"
 						title="Erreur"
 						subtitle="Un problème est survenu sur le serveur, veuillez réessayer !"
-						headerIconComponent={<Ionicons name="ios-alert" size={70} color="white" />}
+						headerIconComponent={<Ionicons name="ios-alert" size={90} color="white" />}
 						titleStyle={{ fontSize: 30 }}
 						subtitleStyle={{ fontSize: 18}}
 					>
@@ -243,7 +243,7 @@ export class Inscription extends Component {
 						theme="danger"
 						title="Erreur"
 						subtitle="L' addresse email que vous avez entré existe déjà !"
-						headerIconComponent={<Ionicons name="ios-alert" size={70} color="white" />}
+						headerIconComponent={<Ionicons name="ios-alert" size={90} color="white" />}
 						titleStyle={{ fontSize: 30 }}
 						subtitleStyle={{ fontSize: 18}}
 					>
@@ -285,7 +285,7 @@ export class Inscription extends Component {
 								poids: '',
 							}}
 
-							onSubmit={values => this.registerCall(values)}
+							onSubmit={values => this.emailCheck(values)}
 							validationSchema={validationSchema}
 						>
 
@@ -693,8 +693,7 @@ const styles = StyleSheet.create({
 
 	keyboard: {
 
-		marginBottom: 0,
-		paddingBottom: 0
+		marginBottom: 0
 	},
 
 	headerLogo: {
