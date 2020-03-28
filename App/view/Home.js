@@ -153,6 +153,7 @@ export default class Home extends Component {
             this.refs.viewShot.capture().then(uri => {
                 // console.log(uri);
             });
+            console.log(dataFetch);
             this.setState({started: false,startTime: 0,markers :markers,routeCoordinates: dataFetch});
             await AsyncStorage.removeItem(STORAGE_KEY_COORDINATES);
             await AsyncStorage.removeItem(STORAGE_KEY_STATS);
@@ -349,12 +350,12 @@ if (!TaskManager.isTaskDefined('GetLocation')) {
                 //     speed:(data.locations[data.locations.length-1].coords.speed*3.6).toFixed(2)})
 
                 if (pastStats == null) {
-                    let Stats= [{distance:distance,avgspeed:(data.locations[data.locations.length-1].coords.speed).toFixed(2),speed:(data.locations[data.locations.length-1].coords.speed).toFixed(2)}]
+                    let Stats= [{distance:distance,avgspeed:(data.locations[data.locations.length-1].coords.speed).toFixed(2),speed:(data.locations[data.locations.length-1].coords.speed).toFixed(2),totaltime:TotalTime}]
                     await Home.setData(STORAGE_KEY_STATS, JSON.stringify(Stats));
                 } else {
                     let pastStatsParsed = JSON.parse(pastStats);
                     // console.log('pastStatsParsed',pastStatsParsed)
-                    let CurrentStats= [{distance:pastStatsParsed[0].distance+distance,avgspeed:(((pastStatsParsed[0].distance+distance)/TotalTime)*3.6).toFixed(2),speed:(data.locations[data.locations.length-1].coords.speed).toFixed(2)}]
+                    let CurrentStats= [{distance:pastStatsParsed[0].distance+distance,avgspeed:(((pastStatsParsed[0].distance+distance)/TotalTime)*3.6).toFixed(2),speed:(data.locations[data.locations.length-1].coords.speed).toFixed(2),totaltime:TotalTime},]
                     await Home.setData(STORAGE_KEY_STATS, JSON.stringify(CurrentStats));
                 }
                 await Home.setData(STORAGE_KEY_COORDINATES,JSON.stringify(JSON.parse(pastCoordinates).concat(currentCoordinates)));

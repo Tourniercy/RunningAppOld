@@ -7,6 +7,7 @@ import LoginScreen from '../view/Login';
 import InscriptionScreen from '../view/Inscription';
 import Activity from "../view/Activity";
 import Home from '../view/Home'
+import Profil from '../view/Profile'
 import Icon from "react-native-vector-icons/FontAwesome5";
 
 const headerStyle = {
@@ -51,7 +52,7 @@ export const SignedIn = createAppContainer(createBottomTabNavigator(
             }
         },
         Profil: {
-            screen: Home,
+            screen: Profil,
             navigationOptions: {
                 tabBarIcon: ({ tintColor }) => (
                     <Icon name="user-alt" size={25} color={tintColor} />
