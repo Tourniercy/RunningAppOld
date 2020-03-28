@@ -17,7 +17,7 @@ export class Login extends Component {
         this.state = {
             show: false,
             showError: false,
-            showErrorEmail: false,
+            showErrorServer: false,
             loading: false,
             hidePassword: true
         }
@@ -27,7 +27,12 @@ export class Login extends Component {
 
         this.setState({loading: true})
 
-        let token = await getToken(values)
+        let token = await getToken(values).then().catch(err => {console.log(err)})
+
+        if (!token) {
+            this.setState({loading: false})
+            this.setState({ showErrorServer: true });
+        }
 
         switch (token) {
             case 200:
@@ -40,7 +45,7 @@ export class Login extends Component {
                 break
             case 500:
                 this.setState({loading: false})
-                this.setState({ showError: true });
+                this.setState({ showErrorServer: true });
                 break
         }
 
@@ -49,7 +54,7 @@ export class Login extends Component {
     handleClose = () => {
         this.setState({ show: false })
         this.setState({ showError: false })
-        this.setState({ showErrorEmail: false })
+        this.setState({ showErrorServer: false })
     }
 
     setPasswordVisibility = () => {
@@ -85,6 +90,30 @@ export class Login extends Component {
                       theme="danger"
                       title="Erreur"
                       subtitle="Les données entrées ne sont pas valides, veuillez réessayer !"
+                      headerIconComponent={<Ionicons name="ios-alert" size={90} color="white" />}
+                      titleStyle={{ fontSize: 30 }}
+                      subtitleStyle={{ fontSize: 18}}
+                      overlayStyle={{ backgroundColor: 'white' }}
+                    >
+
+                        <SCLAlertButton containerStyle={{ marginTop: 50, padding: 14 }} theme="danger" onPress={this.handleClose}>Réessayer</SCLAlertButton>
+
+                    </SCLAlert>
+
+                </View>
+
+                <View style={{
+                    backgroundColor: '#fff',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+
+                    <SCLAlert
+                      show={this.state.showErrorServer}
+                      onRequestClose={this.handleClose}
+                      theme="danger"
+                      title="Erreur"
+                      subtitle="Le serveur ne répond pas, veuillez réessayer !"
                       headerIconComponent={<Ionicons name="ios-alert" size={90} color="white" />}
                       titleStyle={{ fontSize: 30 }}
                       subtitleStyle={{ fontSize: 18}}
