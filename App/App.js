@@ -34,8 +34,9 @@ export default class App extends Component {
         if (!checkedSignIn) {
             return null;
         }
-        signedIn = true;
+        // signedIn = false
         const Layout = createRootNavigator(signedIn);
+
         return (
                 <SafeAreaProvider>
                     <Layout />

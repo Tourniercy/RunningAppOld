@@ -40,9 +40,9 @@ class Course
     private $time;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="array")
      */
-    private $snapshot;
+    private $coordinates;
 
     /**
      * @ORM\Column(type="datetime")
@@ -108,14 +108,14 @@ class Course
         return $this;
     }
 
-    public function getSnapshot(): ?string
+    public function getCoordinates(): ?string
     {
-        return $this->snapshot;
+        return $this->coordinates;
     }
 
-    public function setSnapshot(string $snapshot): self
+    public function setCoordinates(array $coordinates): self
     {
-        $this->snapshot = $snapshot;
+        $this->coordinates = $coordinates;
 
         return $this;
     }

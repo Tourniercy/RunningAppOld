@@ -71,7 +71,7 @@ export class Login extends Component {
 
         return (
 
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, marginTop: 20 }}>
 
                 <View style={{
                     backgroundColor: '#fff',
@@ -98,7 +98,7 @@ export class Login extends Component {
                 </View>
 
                 <Formik
-                  initialValues={{ email: '', password: '' }}
+                  initialValues={{ email: 'salif.ervin@gmail.com', password: 'ervin' }}
                   onSubmit={values => { this.handleSubmit(values) }}
                   validationSchema={validationSchema}
                 >
