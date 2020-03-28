@@ -1,29 +1,18 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import { createStackNavigator } from 'react-navigation-stack';
-import { createAppContainer } from 'react-navigation';
+import { View, Text,Image,FlatList } from 'react-native';
 import { NavigationEvents} from "react-navigation";
-import FlatList, {ListItem} from "react-native-elements";
+import ListItems from './ListItem'
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import MapView, {Marker, Polyline} from "react-native-maps";
 
 class ActivityScreen extends React.Component {
+
     constructor(props) {
         super(props);
 
         this.state = {
-            data: [],
-            search: "",
-            isLoading: false
-        };
-
-    }
-    componentDidMount() {
-    }
-
-    refreshCourses = async () => {
-        const dataDumpCourses = async () => {
-            // placer ici l'appel à la DB
-            console.log('courses récupérées')
-            return [
+            data: [
                 {
                     name: '15.6 km',
                     icon: 'directions-run',
@@ -37,43 +26,58 @@ class ActivityScreen extends React.Component {
                     subtitle: '00:10:23',
                     rightSubtitle : 'lun 10/04/2020'
                 },
+            ],
+            search: "",
+            isLoading: false
+        };
+
+    }
+    componentDidMount = async () => {
+    }
+
+    refreshCourses = async () => {
+        const dataDumpCourses = async () => {
+            // placer ici l'appel à la DB
+            return [
+                {
+                    name: '15.6 km',
+                    icon: 'directions-run',
+                    subtitle: '00:10:23',
+                    rightSubtitle : 'mer 01/01/2020'
+
+                },
+                {
+                    name: '1.4 km',
+                    icon: 'directions-run',
+                    subtitle: '00:10:23',
+                    rightSubtitle : 'lun 10/04/2020'
+                },
             ];
         }
+        this.setState('data',[
+            {
+                name: '15.6 km',
+                icon: 'directions-run',
+                subtitle: '00:10:23',
+                rightSubtitle : 'mer 01/01/2020'
 
+            },
+            {
+                name: '1.4 km',
+                icon: 'directions-run',
+                subtitle: '00:10:23',
+                rightSubtitle : 'lun 10/04/2020'
+            },
+        ]);
         // quand le composant est monté, fetch la DB
-        const dataTemp = await dataDumpCourses()
-        this.setState({data: dataTemp})
         console.log('courses affichées')
         console.log(this.state.data)
     }
 
 
     render() {
-        let ListItems = ({ item }) => (
-            <ListItem
-                title={item.name}
-                subtitle={item.subtitle}
-                leftIcon={{ name: item.icon,color:"#2C5077" }}
-                rightSubtitle={item.rightSubtitle}
-                onPress={() => {alert('pressed')}}
-                containerStyle={{borderStyle:"solid",borderTopWidth:0.8}}
-                rightSubtitleStyle={{width:110}}
-                chevron={{ color: '#2C5077' }}
 
-            />
-        )
-        const list = [
-            {
-                name: 'Amy Farha',
-                avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-                subtitle: 'Vice President'
-            },
-            {
-                name: 'Chris Jackson',
-                avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-                subtitle: 'Vice Chairman'
-            },
-        ]
+        const { navigation } = this.props;
         return (
             <View style={{flex: 1}}>
                 <View style={{flex: 1, flexDirection: 'row',alignContent:'stretch',paddingTop:10}}>
@@ -84,35 +88,61 @@ class ActivityScreen extends React.Component {
                         onDidFocus={() => this.refreshCourses()}
                     />
                     <FlatList
-                        keyExtractor={this.keyExtractor}
-                        data={list}
-                        renderItem={this.renderItem}
+                        data={this.state.data}
+                        renderItem={({ item }) => <ListItems item={item} navigation={navigation} />}
+                        keyExtractor={(item, index) => index.toString()}
+                        onRefresh={this.refreshCourses.bind(this)}
+                        refreshing={this.state.isLoading}
                     />
                 </View>
             </View>
         );
     }
 }
-class ProfileScreen extends React.Component {
+class DetailScreen extends React.Component {
     render() {
+        const { navigation } = this.props;
         return (
-            <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                <Text>Details Screen</Text>
+            <View style={{flex:1}}>
+                <View style={{flex:1}}>
+                    <MapView
+                        style={{
+                            flex: 1
+                        }}
+                        Region={{
+                            latitude: 37.78825,
+                            longitude: -122.4324,
+                            latitudeDelta: 0.0922,
+                            longitudeDelta: 0.0421,
+                        }}
+                    />
+                </View>
+                <View style={{flex:1}}>
+                    <Text>GFF</Text>
+                </View>
+
             </View>
+
+
         );
     }
 }
+const Stack = createStackNavigator();
 
-const AppNavigator = createStackNavigator(
-    {
-        ActivityScreen: ActivityScreen,
-        ProfileScreen: ProfileScreen
-    },
-    {
-        initialRouteName: "ActivityScreen"
-    }
-);
+function MyStack() {
+    return (
+        <Stack.Navigator>
+            <Stack.Screen name="ActivityScreen" component={ActivityScreen} />
+            <Stack.Screen name="DetailScreen" component={DetailScreen} />
+        </Stack.Navigator>
+    );
+}
 
-export default createAppContainer(AppNavigator);
-
+export default function App() {
+    return (
+        <NavigationContainer>
+            <MyStack />
+        </NavigationContainer>
+    );
+}
 
