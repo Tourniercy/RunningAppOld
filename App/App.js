@@ -32,7 +32,7 @@ export default class App extends Component {
         const Layout = createRootNavigator(signedIn);
         return (
             <SafeAreaProvider>
-                    <Layout />
+                <Layout />
             </SafeAreaProvider>
 
         );
