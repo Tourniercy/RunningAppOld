@@ -8,6 +8,7 @@ import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import { Stopwatch } from 'react-native-stopwatch-timer';
 import ViewShot from "react-native-view-shot";
+import SafeAreaView from 'react-native-safe-area-view';
 import * as geolib from 'geolib';
 
 const STORAGE_KEY_COORDINATES = 'COORDINATES';
@@ -204,6 +205,7 @@ export default class Home extends Component {
             }
         }
         return (
+            <SafeAreaView style={{ flex: 1}} forceInset={{ top: 'always' }}>
             <View style={{flex:1}}>
                 <View style={{flex:1,backgroundColor:'white', padding: 10, paddingBottom: 20}}>
                     <View style={{flex: 1, flexDirection: 'row',alignContent:'stretch',justifyContent:'center',alignItems: 'stretch',paddingTop:10}}>
@@ -302,6 +304,7 @@ export default class Home extends Component {
                 </View>
 
             </View>
+            </SafeAreaView>
         );
     }
 

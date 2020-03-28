@@ -3,11 +3,8 @@ import { Platform, StatusBar } from "react-native";
 import { createStackNavigator } from 'react-navigation-stack';
 import { createSwitchNavigator,createAppContainer } from 'react-navigation';
 import createBottomTabNavigator from "react-navigation-tabs/src/navigators/createBottomTabNavigator";
-
-
 import LoginScreen from '../view/Login';
 import InscriptionScreen from '../view/Inscription';
-import ForgotPasswordScreen from '../view/ForgotPassword';
 import Activity from "../view/Activity";
 import Home from '../view/Home'
 import Icon from "react-native-vector-icons/FontAwesome5";
@@ -37,7 +34,7 @@ export const SignedOut = createAppContainer(createStackNavigator({
 
 export const SignedIn = createAppContainer(createBottomTabNavigator(
     {
-        Activités: {
+        Courses: {
             screen: Activity,
             navigationOptions: {
                 tabBarIcon: ({ tintColor }) => (
@@ -45,7 +42,7 @@ export const SignedIn = createAppContainer(createBottomTabNavigator(
                 )
             }
         },
-        Course: {
+        Activité: {
             screen: Home,
             navigationOptions: {
                 tabBarIcon: ({ tintColor }) => (
@@ -53,7 +50,7 @@ export const SignedIn = createAppContainer(createBottomTabNavigator(
                 )
             }
         },
-        Profile: {
+        Profil: {
             screen: Home,
             navigationOptions: {
                 tabBarIcon: ({ tintColor }) => (
@@ -63,7 +60,7 @@ export const SignedIn = createAppContainer(createBottomTabNavigator(
         },
     },
     {
-        initialRouteName: 'Course',
+        initialRouteName: 'Activité',
         tabBarOptions: {
             style: {
                 activeTintColor: '#2C5077'

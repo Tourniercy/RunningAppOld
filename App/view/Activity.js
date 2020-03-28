@@ -80,10 +80,7 @@ class ActivityScreen extends React.Component {
         const { navigation } = this.props;
         return (
             <View style={{flex: 1}}>
-                <View style={{flex: 1, flexDirection: 'row',alignContent:'stretch',paddingTop:10}}>
-                    <Text style={{fontSize: 20, fontWeight: 'bold',textAlign:'left',marginLeft: 20}}>ACTIVITÉS</Text>
-                </View>
-                <View style={{flex:12}}>
+                <View style={{flex:1}}>
                     <NavigationEvents
                         onDidFocus={() => this.refreshCourses()}
                     />
@@ -102,6 +99,7 @@ class ActivityScreen extends React.Component {
 class DetailScreen extends React.Component {
     render() {
         const { navigation } = this.props;
+        navigation.setOptions({ title:  'MAR 21/01/2020' });
         return (
             <View style={{flex:1}}>
                 <View style={{flex:1}}>
@@ -132,8 +130,13 @@ const Stack = createStackNavigator();
 function MyStack() {
     return (
         <Stack.Navigator>
-            <Stack.Screen name="ActivityScreen" component={ActivityScreen} />
-            <Stack.Screen name="DetailScreen" component={DetailScreen} />
+            <Stack.Screen name="ActivityScreen" component={ActivityScreen} options={{
+                title: 'Liste des courses',
+            }} />
+            <Stack.Screen name="DetailScreen" component={DetailScreen} options={{
+                title: 'MAR., 21/01/2020',
+            }}
+                />
         </Stack.Navigator>
     );
 }
