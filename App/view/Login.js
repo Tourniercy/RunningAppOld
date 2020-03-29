@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flex: 1,
         paddingLeft:40,
-        paddingRight:40
+        paddingRight:40,
     },
     textInput: {
         width : 280,
@@ -324,12 +324,28 @@ const styles = StyleSheet.create({
     buttonConnection: {
         backgroundColor: '#2C5077',
         width: 120,
-        height: 50
+        height: 50,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     buttonRegister: {
         borderColor: '#2C5077',
         width: 120,
-        height: 50
+        height: 50,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     inputSection: {
         flexDirection: 'row',

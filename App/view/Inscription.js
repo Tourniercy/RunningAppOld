@@ -179,7 +179,7 @@ export class Inscription extends Component {
 			<KeyboardAvoidingView
 				contentContainerStyle={styles.keyboard}
 				behavior={"height"}
-				keyboardVerticalOffset={-10}
+				keyboardVerticalOffset={-40}
 			>
 
 				{/* Modal : Inscription réussit */}
@@ -187,7 +187,8 @@ export class Inscription extends Component {
 				<View style={{
 					backgroundColor: '#fff',
 					alignItems: 'center',
-					justifyContent: 'center'
+					justifyContent: 'center',
+					marginTop: 20
 				}}>
 
 					<SCLAlert

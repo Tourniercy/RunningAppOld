@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {NavigationEvents, ScrollView} from "react-navigation";
 import {Text, TextInput, View, Dimensions} from "react-native";
 import {Button, Avatar, Divider} from "react-native-elements";
-import { BarChart, Grid,XAxis,LineChart } from 'react-native-svg-charts'
+import { BarChart, Grid,XAxis, YAxis, LineChart } from 'react-native-svg-charts'
 import {onSignIn} from "../auth/Auth";
 import {createStackNavigator} from "@react-navigation/stack";
 import {NavigationContainer} from "@react-navigation/native";
@@ -33,8 +33,8 @@ class DetailProfile extends React.Component {
     }
 
     render() {
-        const fill = 'rgb(14, 65, 244)'
-        const data   = [ 4, 12, 10, 7, 4, 6, 8,4,10,10,10,10 ]
+        const fill = '#2C5077'
+        const data = [ 4, 30, 10, 7, 4, 6, 8, 4, 10, 10, 10, 10 ]
 
 
         const saveDatas = async () => {
@@ -47,133 +47,136 @@ class DetailProfile extends React.Component {
 
         return(
             <ScrollView style={{flex: 1,backgroundColor:'white'}}>
-                <View style={{flex: 1}}>
-                    <View style={{flex: 4, alignItems: 'center', flexDirection: 'row', justifyContent: 'center',marginTop:20}}>
-                            <Avatar
-                                size="xlarge"
-                                rounded
-                                icon={{ name: 'account-circle',type:'material' }}
+                <View style={{flex: 1, alignItems: 'center', flexDirection: 'column'}}>
 
+                    <Avatar
+                        size={90}
+                        icon={{ name: 'user',type:'font-awesome' }}
+                        rounded
+                        onPress={() => console.log("Works!")}
+                        activeOpacity={0.7}
+                        containerStyle={{ marginTop: 20 }}
+                    />
 
-                                onPress={() => console.log("Works!")}
-                                activeOpacity={0.7}
-                            />
-                    </View>
-                    <View>
-                        <View style={{marginTop:20,alignItems: 'center', flexDirection: 'row',justifyContent: 'center'}}>
-                            <Button
-                                //buttonStyle={styles.buttonConnection}
-                                buttonStyle={{backgroundColor: '#2C5077',
-                                    width: 120,
-                                    height: 50}}
-                                title="Déconnecter"
-                                type="solid"
-                                color="#2C5077"
-                                // onPress={handleSubmit}
-                                onPress={() => {
-                                    this.forceUpdate();
-                                }}
-                            />
-                        </View>
-                    </View>
-                    <Divider style={{ backgroundColor: 'black',marginTop:20 }} />
+                    <Text style={{ fontSize: 20, fontWeight: "bold", marginTop: 10 }}>Ervin SALIF</Text>
+                    <Text style={{ marginTop: 10 }}>Membre depuis le 19 nov. 2019</Text>
 
+                    <Button
+                        buttonStyle={{backgroundColor: '#2C5077', width: 120, height: 50, marginTop: 20}}
+                        title="Déconnecter"
+                        type="solid"
+                        color="#2C5077"
+                        // onPress={handleSubmit}
+                        onPress={() => {
+                            this.forceUpdate();
+                        }}
+                    />
 
+                    <Divider style={{ backgroundColor: 'black', marginTop:20 }} />
 
                 </View>
-                <View style={{flex: 1}}>
+
+                <View style={{flex: 1, backgroundColor: '#ffffe6', paddingBottom: 20}}>
                     <Text
                         style={{
                             textAlign: 'center',
                             fontSize: 18,
                             padding: 16,
+                            color: '#2C5077',
+                            fontWeight: 'bold'
                         }}>
-                        Statistique de courses
+                        Statistique des courses
                     </Text>
-                    <BarChart
-                        style={{ height: 200 }}
-                        data={ data }
-                        svg={{ fill }}
-                        contentInset={{ top: 30, bottom: 30 }}
-                    >
-                    </BarChart>
+
+                    <View style={{ flex: 1, alignItems: 'center' }}>
+
+                        <BarChart
+                          style={{ height: 170, width: '80%' }}
+                          data={ data }
+                          svg={{ fill }}
+                          contentInset={{ top: 30, bottom: 30 }}
+                        >
+                        </BarChart>
+
+                    </View>
+
                     <XAxis
-                        style={{ marginHorizontal: -10 }}
-                        data={ data }
-                        formatLabel={ (value, index) => index }
-                        contentInset={{ left: 10, right: 10 }}
-                        svg={{ fontSize: 10, fill: 'black' }}
+                      style={{ flex: 1, marginHorizontal: 35 }}
+                      data={ data }
+                      formatLabel={(value, index) => data[ index ]}
+                      contentInset={{ left: 13, right: 13 }}
+                      svg={{ fontSize: 12, fill: 'black', fontWeight: 'bold' }}
                     />
 
                 </View>
 
-                <View style={{flex: 1, height: 600}}>
+                {/*<View style={{flex: 1, height: 600}}>*/}
 
-                    <View style={{borderColor: "black", borderWidth: 1, margin: 10, flex: 1}}>
-                        <Text style={{fontSize: 20, margin: 5}}>
-                            Nom
-                        </Text>
-                        <TextInput style={{borderColor: 'gray', borderWidth: 1, width: 300, alignSelf: "flex-end", marginRight: 10}}
-                                   onChangeText={text => this.setState({tempnom: text})}
-                                   value={this.state.tempnom}>
-                        </TextInput>
-                    </View>
+                {/*    <View style={{borderColor: "black", borderWidth: 1, margin: 10, flex: 1}}>*/}
+                {/*        <Text style={{fontSize: 20, margin: 5}}>*/}
+                {/*            Nom*/}
+                {/*        </Text>*/}
+                {/*        <TextInput style={{borderColor: 'gray', borderWidth: 1, width: 300, alignSelf: "flex-end", marginRight: 10}}*/}
+                {/*                   onChangeText={text => this.setState({tempnom: text})}*/}
+                {/*                   value={this.state.tempnom}>*/}
+                {/*        </TextInput>*/}
+                {/*    </View>*/}
 
-                    <View style={{borderColor: "black", borderWidth: 1, margin: 10, flex: 1}}>
-                        <Text style={{fontSize: 20, margin: 5}}>
-                            Prenom
-                        </Text>
-                        <TextInput style={{borderColor: 'gray', borderWidth: 1, width: 300, alignSelf: "flex-end", marginRight: 10}}
-                                   onChangeText={text => this.setState({tempprenom: text})}
-                                   value={this.state.tempprenom}>
-                        </TextInput>
-                    </View>
+                {/*    <View style={{borderColor: "black", borderWidth: 1, margin: 10, flex: 1}}>*/}
+                {/*        <Text style={{fontSize: 20, margin: 5}}>*/}
+                {/*            Prenom*/}
+                {/*        </Text>*/}
+                {/*        <TextInput style={{borderColor: 'gray', borderWidth: 1, width: 300, alignSelf: "flex-end", marginRight: 10}}*/}
+                {/*                   onChangeText={text => this.setState({tempprenom: text})}*/}
+                {/*                   value={this.state.tempprenom}>*/}
+                {/*        </TextInput>*/}
+                {/*    </View>*/}
 
-                    <View style={{borderColor: "black", borderWidth: 1, margin: 10, flex: 1}}>
-                        <Text style={{fontSize: 20, margin: 5}}>
-                            Poids
-                        </Text>
-                        <TextInput style={{borderColor: 'gray', borderWidth: 1, width: 300, alignSelf: "flex-end", marginRight: 10}}
-                                   onChangeText={text => this.setState({temppoids: text})}
-                                   value={this.state.temppoids}>
-                        </TextInput>
-                    </View>
+                {/*    <View style={{borderColor: "black", borderWidth: 1, margin: 10, flex: 1}}>*/}
+                {/*        <Text style={{fontSize: 20, margin: 5}}>*/}
+                {/*            Poids*/}
+                {/*        </Text>*/}
+                {/*        <TextInput style={{borderColor: 'gray', borderWidth: 1, width: 300, alignSelf: "flex-end", marginRight: 10}}*/}
+                {/*                   onChangeText={text => this.setState({temppoids: text})}*/}
+                {/*                   value={this.state.temppoids}>*/}
+                {/*        </TextInput>*/}
+                {/*    </View>*/}
 
-                    <View style={{borderColor: "black", borderWidth: 1, margin: 10, flex: 1}}>
-                        <Text style={{fontSize: 20, margin: 5}}>
-                            Adresse mail
-                        </Text>
-                        <TextInput style={{borderColor: 'gray', borderWidth: 1, width: 300, alignSelf: "flex-end", marginRight: 10}}
-                                   onChangeText={text => this.setState({tempadresseMail: text})}
-                                   value={this.state.tempadresseMail}>
-                        </TextInput>
-                    </View>
+                {/*    <View style={{borderColor: "black", borderWidth: 1, margin: 10, flex: 1}}>*/}
+                {/*        <Text style={{fontSize: 20, margin: 5}}>*/}
+                {/*            Adresse mail*/}
+                {/*        </Text>*/}
+                {/*        <TextInput style={{borderColor: 'gray', borderWidth: 1, width: 300, alignSelf: "flex-end", marginRight: 10}}*/}
+                {/*                   onChangeText={text => this.setState({tempadresseMail: text})}*/}
+                {/*                   value={this.state.tempadresseMail}>*/}
+                {/*        </TextInput>*/}
+                {/*    </View>*/}
 
-                    <View style={{borderColor: "black", borderWidth: 1, margin: 10, flex: 1}}>
-                        <Text style={{fontSize: 20, margin: 5}}>
-                            Mot de passe
-                        </Text>
-                        <TextInput style={{borderColor: 'gray', borderWidth: 1, width: 300, alignSelf: "flex-end", marginRight: 10}}
-                                   onChangeText={text => this.setState({tempmdp: text})}
-                                   value={this.state.tempmdp}>
-                        </TextInput>
-                    </View>
+                {/*    <View style={{borderColor: "black", borderWidth: 1, margin: 10, flex: 1}}>*/}
+                {/*        <Text style={{fontSize: 20, margin: 5}}>*/}
+                {/*            Mot de passe*/}
+                {/*        </Text>*/}
+                {/*        <TextInput style={{borderColor: 'gray', borderWidth: 1, width: 300, alignSelf: "flex-end", marginRight: 10}}*/}
+                {/*                   onChangeText={text => this.setState({tempmdp: text})}*/}
+                {/*                   value={this.state.tempmdp}>*/}
+                {/*        </TextInput>*/}
+                {/*    </View>*/}
 
-                    <View style={{margin: 10, flex: 1, justifyContent: "center"}}>
-                        <Button
-                            //buttonStyle={styles.buttonConnection}
-                            title="Sauvegarder"
-                            type="solid"
-                            color="#2C5077"
-                            // onPress={handleSubmit}
-                            onPress={() => {
-                                // this.props.navigation.navigate('Home');
-                                // onSignIn().then(() => this.props.navigation.navigate('SignedIn'));
-                                saveDatas()
-                            }}
-                        />
-                    </View>
-                </View>
+                {/*    <View style={{margin: 10, flex: 1, justifyContent: "center"}}>*/}
+                {/*        <Button*/}
+                {/*            //buttonStyle={styles.buttonConnection}*/}
+                {/*            title="Sauvegarder"*/}
+                {/*            type="solid"*/}
+                {/*            color="#2C5077"*/}
+                {/*            // onPress={handleSubmit}*/}
+                {/*            onPress={() => {*/}
+                {/*                // this.props.navigation.navigate('Home');*/}
+                {/*                // onSignIn().then(() => this.props.navigation.navigate('SignedIn'));*/}
+                {/*                saveDatas()*/}
+                {/*            }}*/}
+                {/*        />*/}
+                {/*    </View>*/}
+                {/*</View>*/}
 
 
                 <NavigationEvents
@@ -190,7 +193,7 @@ function MyStack() {
     return (
         <Stack.Navigator>
             <Stack.Screen name="ActivityScreen" component={DetailProfile} options={{
-                title: 'Profile',
+                title: 'Profil',
             }} />
         </Stack.Navigator>
     );
