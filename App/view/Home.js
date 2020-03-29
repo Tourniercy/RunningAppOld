@@ -7,7 +7,6 @@ import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import { Stopwatch } from 'react-native-stopwatch-timer';
-import ViewShot from "react-native-view-shot";
 import SafeAreaView from 'react-native-safe-area-view';
 import * as geolib from 'geolib';
 
@@ -113,7 +112,7 @@ export default class Home extends Component {
             const dataFetch = JSON.parse(await Home.getData(STORAGE_KEY_COORDINATES));
             const dataStats = JSON.parse(await Home.getData(STORAGE_KEY_STATS));
             if (dataFetch && dataStats) {
-                console.log(dataStats);
+                // console.log(dataStats);
                 this.setState({routeCoordinates: dataFetch,lastLocation : dataFetch[dataFetch.length-1],stats: dataStats,centered:false});
             }
         }
@@ -134,27 +133,30 @@ export default class Home extends Component {
         } else if (this.state.canStart && this.state.toggle){
             this.toggleStopwatch();
             await Location.stopLocationUpdatesAsync('GetLocation');
-            const dataFetch = JSON.parse(await Home.getData(STORAGE_KEY_COORDINATES));
+            const dataCoordinates = JSON.parse(await Home.getData(STORAGE_KEY_COORDINATES));
+            const dataStats = JSON.parse(await Home.getData(STORAGE_KEY_STATS));
             let markers = [{
                 image:require('../assets/img/button_green.png'),
                 coordinates: {
-                    latitude: dataFetch[0].latitude,
-                    longitude: dataFetch[0].longitude
+                    latitude: dataCoordinates[0].latitude,
+                    longitude: dataCoordinates[0].longitude
                 },
             },
                 {
                     image:require('../assets/img/button_red.png'),
                     coordinates: {
-                        latitude: dataFetch[dataFetch.length-1].latitude,
-                        longitude: dataFetch[dataFetch.length-1].longitude
+                        latitude: dataCoordinates[dataCoordinates.length-1].latitude,
+                        longitude: dataCoordinates[dataCoordinates.length-1].longitude
                     },
 
                 }]
-            this.refs.viewShot.capture().then(uri => {
-                // console.log(uri);
-            });
-            console.log(dataFetch);
-            this.setState({started: false,startTime: 0,markers :markers,routeCoordinates: dataFetch});
+            // this.refs.viewShot.capture().then(uri => {
+            //     // console.log(uri);
+            // });
+            dataStats[0].coordinates = dataCoordinates;
+
+            this.setState({started: false,startTime: 0,markers :markers,routeCoordinates: dataCoordinates});
+
             await AsyncStorage.removeItem(STORAGE_KEY_COORDINATES);
             await AsyncStorage.removeItem(STORAGE_KEY_STATS);
             console.log('Stop!');
@@ -207,47 +209,46 @@ export default class Home extends Component {
         }
         return (
             <SafeAreaView style={{ flex: 1}} forceInset={{ top: 'always' }}>
-            <View style={{flex:1}}>
-                <View style={{flex:1,backgroundColor:'white', padding: 10, paddingBottom: 20}}>
-                    <View style={{flex: 1, flexDirection: 'row',alignContent:'stretch',justifyContent:'center',alignItems: 'stretch',paddingTop:10}}>
-                        <View style={{flex: 1, width:50, alignItems:'center'}}>
-                            <Image
-                                style={{alignSelf: 'center', width: 50, height: 50}}
-                                source={require('../assets/img/Logo.png')}
-                            />
+                <View style={{flex:1}}>
+                    <View style={{flex:1,backgroundColor:'white', padding: 10, paddingBottom: 20}}>
+                        <View style={{flex: 1, flexDirection: 'row',alignContent:'stretch',justifyContent:'center',alignItems: 'stretch',paddingTop:10}}>
+                            <View style={{flex: 1, width:50, alignItems:'center'}}>
+                                <Image
+                                    style={{alignSelf: 'center', width: 50, height: 50}}
+                                    source={require('../assets/img/Logo.png')}
+                                />
+                            </View>
+                        </View>
+                        <View style={{flex: 1, flexDirection: 'row',alignContent:'stretch',justifyContent:'center',alignItems: 'stretch', marginTop: 20}}>
+                            <View style={{flex: 1, alignItems:'center'}} >
+                                <Text style={{fontSize: 24, fontWeight: 'bold'}}>{speed}</Text>
+                                <Text style={{fontSize: 12}}>Rythme. moy. (km/h)</Text>
+                            </View>
+                            <View style={{flex: 1, alignItems:'center'}}>
+                                <Stopwatch start={this.state.stopwatchStart} startTime={this.state.startTime} getTime={this.getFormattedTime} reset={this.state.stopwatchReset} options={stopwatchoptions}/>
+                                <Text style={{fontSize: 12}}>Durée</Text>
+                            </View>
+                            <View style={{flex: 1, alignItems:'center'}}>
+                                <Text style={{fontSize: 24, fontWeight: 'bold'}}>{distance}</Text>
+                                <Text style={{fontSize: 12}}>Distance (m)</Text>
+                            </View>
                         </View>
                     </View>
-                    <View style={{flex: 1, flexDirection: 'row',alignContent:'stretch',justifyContent:'center',alignItems: 'stretch', marginTop: 20}}>
-                        <View style={{flex: 1, alignItems:'center'}} >
-                            <Text style={{fontSize: 24, fontWeight: 'bold'}}>{speed}</Text>
-                            <Text style={{fontSize: 12}}>Rythme. moy. (km/h)</Text>
-                        </View>
-                        <View style={{flex: 1, alignItems:'center'}}>
-                            <Stopwatch start={this.state.stopwatchStart} startTime={this.state.startTime} getTime={this.getFormattedTime} reset={this.state.stopwatchReset} options={stopwatchoptions}/>
-                            <Text style={{fontSize: 12}}>Durée</Text>
-                        </View>
-                        <View style={{flex: 1, alignItems:'center'}}>
-                            <Text style={{fontSize: 24, fontWeight: 'bold'}}>{distance}</Text>
-                            <Text style={{fontSize: 12}}>Distance (m)</Text>
-                        </View>
-                    </View>
-                </View>
-                <ViewShot ref="viewShot" options={{ format: "jpg", quality: 0.9,result:"base64" }} style={{flex:4}}>
                     <MapView
                         ref={(map) => { this.map = map; }}
                         showsMyLocationButton={ false }
                         showsUserLocation={ true }
                         style={{
-                            flex: 1
+                            flex: 4
                         }}
                         region={latitude == null ?
                             undefined :
                             {
-                            latitude: latitude,
-                            longitude: longitude,
-                            latitudeDelta: latitudeDelta,
-                            longitudeDelta: longitudeDelta
-                        }
+                                latitude: latitude,
+                                longitude: longitude,
+                                latitudeDelta: latitudeDelta,
+                                longitudeDelta: longitudeDelta
+                            }
                         }
 
                         onUserLocationChange={this.onUserLocationChange}
@@ -267,44 +268,43 @@ export default class Home extends Component {
                             strokeWidth={5}
                         />
                     </MapView>
-                </ViewShot>
-                <View
-                    style={{
-                        position: 'absolute',//use absolute position to show button on top of the map
-                        top: '27%', //for center align
-                        left : '87%',
-                        flexDirection: 'row',
-                    }}
-                >
-                    <Button
-                        icon={
-                            <Icon
-                                name="gps-fixed"
-                                size={20}
-                                color="white"
-                            />
-                        }
-                        onPress={this._onPressCenter}
-                    />
-                </View>
-                <View
-                    style={{
-                        position: 'absolute',//use absolute position to show button on top of the map
-                        top: '90%', //for center align
-                        alignSelf: 'center', //for align to right
-                        flexDirection: 'row',
-                    }}
-                >
-                    <Button
-                        buttonStyle={{backgroundColor:buttonBg,width:120,height:50}}
-                        title={textValue}
-                        type="solid"
-                        color="#2C5077"
-                        onPress={this._onPressStopStart}
-                    />
-                </View>
+                    <View
+                        style={{
+                            position: 'absolute',//use absolute position to show button on top of the map
+                            top: '27%', //for center align
+                            left : '87%',
+                            flexDirection: 'row',
+                        }}
+                    >
+                        <Button
+                            icon={
+                                <Icon
+                                    name="gps-fixed"
+                                    size={20}
+                                    color="white"
+                                />
+                            }
+                            onPress={this._onPressCenter}
+                        />
+                    </View>
+                    <View
+                        style={{
+                            position: 'absolute',//use absolute position to show button on top of the map
+                            top: '90%', //for center align
+                            alignSelf: 'center', //for align to right
+                            flexDirection: 'row',
+                        }}
+                    >
+                        <Button
+                            buttonStyle={{backgroundColor:buttonBg,width:120,height:50}}
+                            title={textValue}
+                            type="solid"
+                            color="#2C5077"
+                            onPress={this._onPressStopStart}
+                        />
+                    </View>
 
-            </View>
+                </View>
             </SafeAreaView>
         );
     }
@@ -346,16 +346,22 @@ if (!TaskManager.isTaskDefined('GetLocation')) {
                 // console.log('Average speed',((pastStats+distance)/TotalTime)*3.6);
                 // console.log('Distance tottal',pastStats,distance)
                 // console.log({distance:pastStats+distance,
-                //     avgspeed:(((pastStats+distance)/TotalTime)*3.6).toFixed(2),
+                //     avgSpeed:(((pastStats+distance)/TotalTime)*3.6).toFixed(2),
                 //     speed:(data.locations[data.locations.length-1].coords.speed*3.6).toFixed(2)})
 
                 if (pastStats == null) {
-                    let Stats= [{distance:distance,avgspeed:(data.locations[data.locations.length-1].coords.speed).toFixed(2),speed:(data.locations[data.locations.length-1].coords.speed).toFixed(2),totaltime:TotalTime}]
+                    let Stats= [{distance:distance,avgSpeed:(data.locations[data.locations.length-1].coords.speed).toFixed(2),speed:(data.locations[data.locations.length-1].coords.speed).toFixed(2),maxpseed:(data.locations[data.locations.length-1].coords.speed).toFixed(2),totaltime:TotalTime}]
                     await Home.setData(STORAGE_KEY_STATS, JSON.stringify(Stats));
                 } else {
                     let pastStatsParsed = JSON.parse(pastStats);
                     // console.log('pastStatsParsed',pastStatsParsed)
-                    let CurrentStats= [{distance:pastStatsParsed[0].distance+distance,avgspeed:(((pastStatsParsed[0].distance+distance)/TotalTime)*3.6).toFixed(2),speed:(data.locations[data.locations.length-1].coords.speed).toFixed(2),totaltime:TotalTime},]
+                    let maxSpeed = 0;
+                    if (data.locations[data.locations.length-1].coords.speed.toFixed(2) > pastStatsParsed[0].maxSpeed) {
+                        maxSpeed = data.locations[data.locations.length-1].coords.speed.toFixed(2);
+                    } else {
+                        maxSpeed = pastStatsParsed[0].speed;
+                    }
+                    let CurrentStats= [{distance:pastStatsParsed[0].distance+distance,avgSpeed:(((pastStatsParsed[0].distance+distance)/TotalTime)*3.6).toFixed(2),maxSpeed:maxSpeed,speed:(data.locations[data.locations.length-1].coords.speed).toFixed(2),totaltime:TotalTime},]
                     await Home.setData(STORAGE_KEY_STATS, JSON.stringify(CurrentStats));
                 }
                 await Home.setData(STORAGE_KEY_COORDINATES,JSON.stringify(JSON.parse(pastCoordinates).concat(currentCoordinates)));

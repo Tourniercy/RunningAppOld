@@ -1,4 +1,5 @@
 import { AsyncStorage } from "react-native";
+import config from '../config/config';
 
 let USER_TOKEN = "";
 let USER_REFRESH_TOKEN = "";
@@ -8,7 +9,7 @@ export async function getToken(values) {
 
   let token = await
 
-    fetch(`http://d2714e36.ngrok.io/api/login_check`, {
+    fetch(``+config.API_URL+`/api/login_check`, {
 
       method: 'POST',
       headers: {
@@ -27,8 +28,7 @@ export async function getToken(values) {
     .then(async responseData => {
 
       if (responseData.token) {
-
-        let id = await fetch(`http://d2714e36.ngrok.io/users/check/` + values.email, {
+        let id = await fetch(``+config.API_URL+`/users/check/` + values.email, {
 
           method: 'POST',
           headers: {

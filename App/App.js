@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Platform, StatusBar, StyleSheet, AppRegistry} from 'react-native';
+import {Platform, StatusBar, StyleSheet, AppRegistry, AsyncStorage, AppState} from 'react-native';
 import { createRootNavigator } from "./navigation/Navigation";
 import { isSignedIn } from "./auth/Auth";
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -16,11 +16,11 @@ export default class App extends Component {
         };
     }
 
-    componentDidMount() {
+    componentDidMount = async() => {
         isSignedIn()
             .then(res => this.setState({ signedIn: res, checkedSignIn: true }))
             .catch(err => alert("An error occurred"));
-    }
+    };
 
     render() {
         let { checkedSignIn, signedIn } = this.state;
