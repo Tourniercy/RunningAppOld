@@ -141,5 +141,7 @@ class Course
     public function setCreatedAt(\DateTime $createdAt): self
     {
       $this->createdAt = $createdAt;
+
+      return $this;
     }
 }
