@@ -77,7 +77,7 @@ export async function getUserId() {
 }
 
 export async function getUserToken() {
-  return  await AsyncStorage.getItem("token")
+  return await AsyncStorage.getItem("token")
 }
 
 export const onSignOut = () => AsyncStorage.removeItem("token");

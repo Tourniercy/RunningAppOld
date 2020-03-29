@@ -49,6 +49,7 @@ class Course
      */
     private $createdAt;
 
+
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="courses")
      * @ORM\JoinColumn(nullable=false)
@@ -108,7 +109,7 @@ class Course
         return $this;
     }
 
-    public function getCoordinates(): ?string
+    public function getCoordinates(): ?array
     {
         return $this->coordinates;
     }
@@ -130,5 +131,15 @@ class Course
         $this->user = $user;
 
         return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTime
+    {
+      return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTime $createdAt): self
+    {
+      $this->createdAt = $createdAt;
     }
 }
