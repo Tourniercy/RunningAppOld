@@ -48,7 +48,7 @@ export async function getToken(values) {
         USER_TOKEN = await responseData.token
         USER_REFRESH_TOKEN = await responseData.refresh_token
 
-        onSignIn()
+        await onSignIn()
         return 200
       }
       else if (responseData.code === 401) {
@@ -67,9 +67,9 @@ export async function getToken(values) {
 }
 
 export const onSignIn = async () => {
-  AsyncStorage.setItem("user_id", JSON.stringify(USER_ID))
-  AsyncStorage.setItem("token", USER_TOKEN)
-  AsyncStorage.setItem("refresh_token", USER_REFRESH_TOKEN)
+  await AsyncStorage.setItem("user_id", JSON.stringify(USER_ID))
+  await AsyncStorage.setItem("token", USER_TOKEN)
+  await AsyncStorage.setItem("refresh_token", USER_REFRESH_TOKEN)
 };
 
 export async function getUserId() {

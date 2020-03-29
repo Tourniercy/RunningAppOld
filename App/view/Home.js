@@ -9,6 +9,8 @@ import * as TaskManager from 'expo-task-manager';
 import { Stopwatch } from 'react-native-stopwatch-timer';
 import SafeAreaView from 'react-native-safe-area-view';
 import * as geolib from 'geolib';
+import config from "../config/config";
+import {onSignIn} from "../auth/Auth";
 
 const STORAGE_KEY_COORDINATES = 'COORDINATES';
 const STORAGE_KEY_STATS = 'STATS';
@@ -154,6 +156,36 @@ export default class Home extends Component {
             //     // console.log(uri);
             // });
             dataStats[0].coordinates = dataCoordinates;
+            const getUserToken = await Home.getData("token");
+            console.log(getUserToken);
+            fetch(``+config.API_URL+`/api/courses`, {
+
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer '+getUserToken
+                },
+                body: JSON.stringify({
+                    "distance": 0,
+                    "avgSpeed": 0,
+                    "maxSpeed": 0,
+                    "time":'15:26:00',
+                    "createdAt": "2020-03-29T15:26:33.386Z",
+                    "coordinates": [
+                        "10"
+                    ],
+                    "user": "/api/users/1"
+                })
+            })
+                .then(async resp => {
+                    console.log(resp);
+                    return resp.json()
+                }).then(async responseData => {
+                    console.log(responseData);
+                    return 200
+                })
+
 
             this.setState({started: false,startTime: 0,markers :markers,routeCoordinates: dataCoordinates});
 
