@@ -6,6 +6,8 @@ import * as yup from 'yup'
 import DatePicker from 'react-native-datepicker'
 import { SCLAlert, SCLAlertButton } from 'react-native-scl-alert'
 import { Ionicons } from '@expo/vector-icons'
+import config from '../config/config';
+
 
 
 
@@ -30,7 +32,7 @@ export class Inscription extends Component {
 
 		this.setState({loading: true})
 
-		fetch(`http://d2714e36.ngrok.io/users/check/`+ values.email, {
+		fetch(`/users/check/`+ values.email, {
 
 			method: 'POST',
 			headers: {
@@ -71,7 +73,7 @@ export class Inscription extends Component {
 			return false
 		}
 
-		fetch(`http://d2714e36.ngrok.io/signup`, {
+		fetch(``+config.API_URL+`/signup`, {
 
 			method: 'POST',
 			headers: {

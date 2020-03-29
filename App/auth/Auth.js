@@ -1,4 +1,5 @@
 import { AsyncStorage } from "react-native";
+import config from '../config/config';
 
 let USER_TOKEN = "";
 let USER_REFRESH_TOKEN = "";
@@ -8,7 +9,7 @@ export async function getToken(values) {
 
   let token = await
 
-    fetch(`http://d2714e36.ngrok.io/api/login_check`, {
+    fetch(``+config.API_URL+`/api/login_check`, {
 
       method: 'POST',
       headers: {
@@ -27,8 +28,7 @@ export async function getToken(values) {
     .then(async responseData => {
 
       if (responseData.token) {
-
-        let id = await fetch(`http://d2714e36.ngrok.io/users/check/` + values.email, {
+        let id = await fetch(``+config.API_URL+`/users/check/` + values.email, {
 
           method: 'POST',
           headers: {
@@ -48,7 +48,7 @@ export async function getToken(values) {
         USER_TOKEN = await responseData.token
         USER_REFRESH_TOKEN = await responseData.refresh_token
 
-        onSignIn()
+        await onSignIn()
         return 200
       }
       else if (responseData.code === 401) {
@@ -67,9 +67,9 @@ export async function getToken(values) {
 }
 
 export const onSignIn = async () => {
-  AsyncStorage.setItem("user_id", JSON.stringify(USER_ID))
-  AsyncStorage.setItem("token", USER_TOKEN)
-  AsyncStorage.setItem("refresh_token", USER_REFRESH_TOKEN)
+  await AsyncStorage.setItem("user_id", JSON.stringify(USER_ID))
+  await AsyncStorage.setItem("token", USER_TOKEN)
+  await AsyncStorage.setItem("refresh_token", USER_REFRESH_TOKEN)
 };
 
 export async function getUserId() {
