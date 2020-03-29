@@ -97,6 +97,7 @@ class SecurityController extends AbstractController
         $response = new Response();
         $response->setContent(json_encode([
           'email' => $user->getEmail(),
+          'id' => $user->getId()
         ]));
         $response->headers->set('Content-Type', 'application/json');
         $response->setStatusCode(302);

@@ -35,6 +35,7 @@ class DetailProfile extends React.Component {
     render() {
         const fill = '#2C5077'
         const data = [ 4, 30, 10, 7, 4, 6, 8, 4, 10, 10, 10, 10 ]
+        const dates = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ]
 
 
         const saveDatas = async () => {
@@ -103,7 +104,7 @@ class DetailProfile extends React.Component {
                     <XAxis
                       style={{ flex: 1, marginHorizontal: 35 }}
                       data={ data }
-                      formatLabel={(value, index) => data[ index ]}
+                      formatLabel={(value, index) => dates[ index ]}
                       contentInset={{ left: 13, right: 13 }}
                       svg={{ fontSize: 12, fill: 'black', fontWeight: 'bold' }}
                     />

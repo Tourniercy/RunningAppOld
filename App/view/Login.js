@@ -127,7 +127,7 @@ export class Login extends Component {
                 </View>
 
                 <Formik
-                  initialValues={{ email: 'salif.ervin@gmail.com', password: 'ervin' }}
+                  initialValues={{ email: '', password: '' }}
                   onSubmit={values => { this.handleSubmit(values) }}
                   validationSchema={validationSchema}
                 >

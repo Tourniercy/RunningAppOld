@@ -2,6 +2,7 @@ import { AsyncStorage } from "react-native";
 
 let USER_TOKEN = "";
 let USER_REFRESH_TOKEN = "";
+let USER_ID = "";
 
 export async function getToken(values) {
 
@@ -23,12 +24,30 @@ export async function getToken(values) {
 
         return resp.json()
     })
-    .then(responseData => {
+    .then(async responseData => {
 
       if (responseData.token) {
 
-        USER_TOKEN = responseData.token
-        USER_REFRESH_TOKEN = responseData.refresh_token
+        let id = await fetch(`http://d2714e36.ngrok.io/users/check/` + values.email, {
+
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          }
+        })
+        .then(async resp => {
+
+          return resp.json()
+        })
+        .then(async responseData => {
+          return responseData.id
+        })
+
+        USER_ID = await id
+        USER_TOKEN = await responseData.token
+        USER_REFRESH_TOKEN = await responseData.refresh_token
+
         onSignIn()
         return 200
       }
@@ -47,10 +66,19 @@ export async function getToken(values) {
   return token
 }
 
-export const onSignIn = () => {
+export const onSignIn = async () => {
+  AsyncStorage.setItem("user_id", JSON.stringify(USER_ID))
   AsyncStorage.setItem("token", USER_TOKEN)
   AsyncStorage.setItem("refresh_token", USER_REFRESH_TOKEN)
 };
+
+export async function getUserId() {
+  return await AsyncStorage.getItem("user_id")
+}
+
+export async function getUserToken() {
+  return  await AsyncStorage.getItem("token")
+}
 
 export const onSignOut = () => AsyncStorage.removeItem("token");
 
