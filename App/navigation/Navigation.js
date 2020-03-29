@@ -49,7 +49,7 @@ export const SignedIn = createAppContainer(createBottomTabNavigator(
                 tabBarIcon: ({ tintColor }) => (
                     <Icon name="walking" size={25} color={tintColor} />
                 )
-            }
+            },
         },
         Profil: {
             screen: Profil,
@@ -64,7 +64,8 @@ export const SignedIn = createAppContainer(createBottomTabNavigator(
         initialRouteName: 'Activité',
         tabBarOptions: {
             style: {
-                activeTintColor: '#2C5077'
+                activeTintColor: '#2C5077',
+                height: 60
             }
         }
     }
