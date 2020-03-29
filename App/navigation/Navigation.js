@@ -39,7 +39,7 @@ export const SignedIn = createAppContainer(createBottomTabNavigator(
             screen: Activity,
             navigationOptions: {
                 tabBarIcon: ({ tintColor }) => (
-                    <Icon name="list" size={25} color={tintColor} />
+                    <Icon name="list" size={20} color={tintColor} style={{ marginBottom: -3 }} />
                 )
             }
         },
@@ -47,7 +47,7 @@ export const SignedIn = createAppContainer(createBottomTabNavigator(
             screen: Home,
             navigationOptions: {
                 tabBarIcon: ({ tintColor }) => (
-                    <Icon name="walking" size={25} color={tintColor} />
+                    <Icon name="walking" size={20} color={tintColor} style={{ marginBottom: -3 }} />
                 )
             },
         },
@@ -55,7 +55,7 @@ export const SignedIn = createAppContainer(createBottomTabNavigator(
             screen: Profil,
             navigationOptions: {
                 tabBarIcon: ({ tintColor }) => (
-                    <Icon name="user-alt" size={25} color={tintColor} />
+                    <Icon name="user-alt" size={20} color={tintColor} style={{ marginBottom: -3 }} />
                 )
             }
         },
@@ -64,8 +64,7 @@ export const SignedIn = createAppContainer(createBottomTabNavigator(
         initialRouteName: 'Activité',
         tabBarOptions: {
             style: {
-                activeTintColor: '#2C5077',
-                height: 60
+                activeTintColor: '#2C5077'
             }
         }
     }
