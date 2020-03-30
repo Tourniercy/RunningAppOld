@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light" style="height: 90px">
   <img src="{{ asset('icons.png') }}" alt="" width="70px" class="mx-2 mr-3">
-  <a class="navbar-brand" style="color: #566787; font-size: 30px; font-weight: bold" href="#">Running</a>
+  <a class="navbar-brand" style="color: #566787; font-size: 30px; font-weight: bold" href="{{ path('users') }}">Running</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -14,4 +14,9 @@
       </li>
     </ul>
   </div>
+  {% if app.user %}
+
+    <a class="btn btn-danger text-center mr-5" href="{{ path('app_logout') }}">Se déconnecter</a>
+
+  {% endif %}
 </nav>

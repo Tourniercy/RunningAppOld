@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connection{% endblock %}
+
+{% block body %}
+
+  <div class="mt-5 mb-5 d-flex justify-content-center align-items-center flex-column">
+
+    <form method="post" action="{{ path('add_user') }}" class="d-flex justify-content-center align-items-center flex-column">
+
+      <img src="{{ asset('icons.png') }}" width="100px" alt="">
+
+      <h1 class="mb-3 mt-4 font-weight-bold text-white">Inscription</h1>
+{#      <h5 class="mb-1 font-weight-normal text-white">Connexion</h5>#}
+{#      {% if error %}#}
+{#        <div class="alert alert-danger mt-3">{{ error.messageKey|trans(error.messageData, 'security') }}</div>#}
+{#      {% endif %}#}
+
+      <div class="card mt-4 py-3">
+
+        <div class="my-4 w-75 mw-50 mx-auto">
+
+          <label for="inputEmail">Prénom</label>
+          <input type="text" name="firstname" id="inputEmail" class="form-control" required autofocus>
+
+          <label for="inputEmail" class="mt-3">Nom</label>
+          <input type="text" name="lastname" id="inputEmail" class="form-control" required>
+
+          <label for="inputEmail" class="mt-3">Email</label>
+          <input type="email" name="email" id="inputEmail" class="form-control" required>
+
+          <label for="inputPassword" class="mt-3">Mot de passe</label>
+          <input type="password" name="password" id="inputPassword" class="form-control" required>
+
+          <label for="inputPassword" class="mt-3">Date de naissance</label>
+          <input type="text" name="birthDate" id="inputPassword" class="form-control edit-date" required>
+
+          <label for="inputPassword" class="mt-3">Poids</label>
+          <input type="number" name="weight" id="inputPassword" class="form-control" required>
+
+          <div class="mt-5 pt-1 d-flex justify-content-center">
+            <button class="btn btn-primary w-75" type="submit">
+              Valider
+            </button>
+          </div>
+
+        </div>
+
+        {#
+            Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
+            See https://symfony.com/doc/current/security/remember_me.html
+
+            <div class="checkbox mb-3">
+                <label>
+                    <input type="checkbox" name="_remember_me"> Remember me
+                </label>
+            </div>
+        #}
+
+
+      </div>
+
+    </form>
+
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script>
+		$(document).ready(function () {
+			$(".edit-date").focus( function() {
+				$(this).attr({type: 'date'});
+			});
+    })
+  </script>
+
+{% endblock %}

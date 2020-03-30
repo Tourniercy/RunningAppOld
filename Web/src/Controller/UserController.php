@@ -28,6 +28,45 @@ class UserController extends AbstractController
   }
 
   /**
+   * @Route("/users/{id}", name="show_user")
+   */
+  public function showUser(Request $request)
+  {
+    $user = $this->getDoctrine()->getRepository(User::class)->find($request->attributes->get('id'));
+
+    $courses = $user->getCourses();
+
+    $distances = 0;
+    $speeds = 0;
+    $maxSpeeds = 0;
+    $dates = null;
+
+    foreach ($courses as $i) {
+      $distances += $i->getDistance();
+      $speeds += $i->getAvgSpeed();
+      $maxSpeeds += $i->getMaxSpeed();
+      $dates += strtotime($i->getTime()->format('H:i:s'));
+    }
+
+    $avgDistance = $distances / count($courses);
+    $avgSpeeds = $speeds / count($courses);
+    $maxAvgSpeeds = $maxSpeeds / count($courses);
+    $avgTimes = $dates / count($courses);
+    $avgTime = date('H:i:s', $avgTimes);
+
+//    dump(date('H:i:s', $avgTime));
+//    die();
+
+    return $this->render('user/user.html.twig', [
+      "courses" => $courses,
+      "avgDistance" => $avgDistance,
+      "avgSpeed" => $avgSpeeds,
+      "avgMaxSpeed" => $maxAvgSpeeds,
+      "avgTime" => $avgTime
+    ]);
+  }
+
+  /**
    * @Route("/delete/user/{id}", name="delete_user")
    */
   public function deleteUser(Request $request, EntityManagerInterface $entityManager)
@@ -65,7 +104,7 @@ class UserController extends AbstractController
     $entityManager->persist($user);
     $entityManager->flush();
 
-    return $this->redirectToRoute('users');
+    return $this->redirectToRoute('app_login');
   }
 
   /**
@@ -113,11 +152,12 @@ class UserController extends AbstractController
   public function deleteCourse(Request $request, EntityManagerInterface $entityManager)
   {
     $course = $this->getDoctrine()->getRepository(Course::class)->find($request->attributes->get('id'));
+    $user = $course->getUser()->getId();
 
     $entityManager->remove($course);
     $entityManager->flush();
 
-    return $this->redirectToRoute('courses');
+    return $this->redirectToRoute('show_user', ['id' => $user]);
   }
 
   /**

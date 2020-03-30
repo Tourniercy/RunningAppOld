@@ -1,0 +1,223 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User Courses Panel{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <link href="{{ asset('../css/user.css') }}" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+{% endblock %}
+
+{% block body %}
+
+  {{ include('user/nav.html.twig') }}
+
+  <div class="container mt-5 pt-2">
+    <div>
+      <h2 class="text-white">Statistiques</h2>
+    </div>
+    <div class="row text-center mt-5">
+      <div class="col">
+        <div class="counter">
+          <i class="fa fa-signal fa-2x"></i>
+          <h2 class="timer count-title count-number" data-to="100" data-speed="1500">{{ avgDistance | number_format(2) }}</h2>
+          <small>mètres</small>
+          <p class="count-text ">Distance moyenne</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="counter">
+          <i class="fa fa-tachometer fa-2x"></i>
+          <h2 class="timer count-title count-number" data-to="1700" data-speed="1500">{{ avgSpeed | number_format(2) }}</h2>
+          <small>km/h</small>
+          <p class="count-text ">Vitesse moyenne</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="counter">
+          <i class="fa fa-tachometer fa-2x"></i>
+          <h2 class="timer count-title count-number" data-to="11900" data-speed="1500">{{ avgMaxSpeed | number_format(2) }}</h2>
+          <small>km/h</small>
+          <p class="count-text ">Vitesse maximum (moyenne)</p>
+        </div></div>
+      <div class="col">
+        <div class="counter">
+          <i class="fa fa-clock-o fa-2x"></i>
+          <h2 class="timer count-title count-number" data-to="157" data-speed="1500">{{ avgTime }}</h2>
+          <small>Heures / Minutes / Secondes</small>
+          <p class="count-text ">Temps moyen</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="table-wrapper">
+      <div class="table-title">
+        <div class="row">
+          <div class="col-sm-6">
+            <h2>Gérer les <b>Courses</b></h2>
+          </div>
+        </div>
+      </div>
+      <table class="table table-striped table-hover">
+        <thead>
+        <tr>
+          <th>User ID</th>
+          <th>User</th>
+          <th>Distance</th>
+          <th>Temps</th>
+          <th>Vitesse Moyenne</th>
+          <th>Vitesse Maximum</th>
+          <th>Crée le</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for course in courses %}
+
+          {% set entryInfo = {
+            distance: course.distance,
+            avgSpeed: course.avgSpeed,
+            maxSpeed: course.maxSpeed,
+            time: course.time,
+          } %}
+          <tr>
+            <td>{{ course.user.id }}</td>
+            <td>{{ course.user.firstname }} {{ course.user.lastname }}</td>
+            <td>{{ course.distance }} mètres</td>
+            <td>{{ course.time | date('H:i:s') }}</td>
+            <td>{{ course.avgSpeed }} km/h</td>
+            <td>{{ course.maxSpeed }} km/h</td>
+            <td>{{ course.createdAt | date("d/m/Y") }}</td>
+            <td>
+              <a href="#editEmployeeModal" class="edit editBtn" data-course="{{ entryInfo | json_encode }}" data-path="{{ path('edit_course', {'id': course.id }) }}"
+                 data-toggle="modal"><i class="material-icons"
+                 data-toggle="tooltip"
+                 title="Edit">&#xE254;</i></a>
+              <a href="#deleteEmployeeModal" class="delete deleteBtn" data-path="{{ path('delete_course', {'id': course.id }) }}"
+                 data-toggle="modal"><i class="material-icons"
+                 data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+            </td>
+          </tr>
+        {% endfor %}
+
+        </tbody>
+      </table>
+
+  </div>
+  <!-- Edit Modal HTML -->
+  <div id="editEmployeeModal" class="modal fade">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form action="" method="POST" id="modal-edit">
+          <div class="modal-header">
+            <h4 class="modal-title">Editer la course</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Distance (mètres)</label>
+              <input type="number" class="form-control edit-distance" required name="distance">
+            </div>
+            <div class="form-group">
+              <label>Vitesse moyenne (km/h)</label>
+              <input type="number" class="form-control edit-avgSpeed" required name="avgSpeed">
+            </div>
+            <div class="form-group">
+              <label>Vitesse maximum (km/h)</label>
+              <input type="number" class="form-control edit-maxSpeed" required name="maxSpeed">
+            </div>
+            <div class="form-group">
+              <label>Temps (heures / minutes)</label>
+              <input type="text" class="form-control edit-time" required name="time">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <input type="button" class="btn btn-default" data-dismiss="modal" value="Annuler">
+            <input type="submit" class="btn btn-info" value="Modifier">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- Delete Modal HTML -->
+  <div id="deleteEmployeeModal" class="modal fade">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="modal-delete" action="" method="POST">
+          <div class="modal-header">
+            <h4 class="modal-title">Supprimer la course</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          </div>
+          <div class="modal-body">
+            <p style="font-size: 14px;">Êtes-vous sûr de vouloir supprimer cette course ?</p>
+            <p class="text-warning">
+              <small style="font-size: 12px;">Cette action ne peut pas être annulée.</small>
+            </p>
+          </div>
+          <div class="modal-footer">
+            <input type="button" class="btn btn-default" data-dismiss="modal" value="Annuler">
+            <input type="submit" class="btn btn-danger" value="Supprimer">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script type="text/javascript">
+		$(document).ready(function () {
+			// Activate tooltip
+			$('[data-toggle="tooltip"]').tooltip()
+
+			// Select/Deselect checkboxes
+			var checkbox = $('table tbody input[type="checkbox"]')
+			$("#selectAll").click(function () {
+				if (this.checked) {
+					checkbox.each(function () {
+						this.checked = true
+					})
+				} else {
+					checkbox.each(function () {
+						this.checked = false
+					})
+				}
+			})
+			checkbox.click(function () {
+				if (!this.checked) {
+					$("#selectAll").prop("checked", false)
+				}
+			})
+
+			$(".deleteBtn").click(function () {
+
+        $('#modal-delete').attr('action', $(this).attr('data-path'))
+			})
+
+			$(".editBtn").click(function () {
+
+				$('#modal-edit').attr('action', $(this).attr('data-path'))
+
+        let course = $(this).attr('data-course')
+        let parsed = JSON.parse(course)
+        let date = new Date(parsed.time.date)
+
+        date = date.getHours() + ":" + date.getMinutes();
+
+
+        $('.edit-distance').attr('value', parsed.distance)
+        $('.edit-avgSpeed').attr('value', parsed.avgSpeed)
+        $('.edit-maxSpeed').attr('value', parsed.maxSpeed)
+        $('.edit-time').attr('value', date)
+
+			})
+
+			$(".edit-time").focus( function() {
+				$(this).attr({type: 'time'});
+			});
+		})
+  </script>
+
+{% endblock %}

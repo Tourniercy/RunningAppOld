@@ -19,10 +19,6 @@
           <div class="col-sm-6">
             <h2>Gérer les <b>Utilisateurs</b></h2>
           </div>
-          <div class="col-sm-6">
-            <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i
-                      class="material-icons">&#xE147;</i> <span>Ajouter</span></a>
-          </div>
         </div>
       </div>
       <table class="table table-striped table-hover">
@@ -53,15 +49,16 @@
           <td>{{ user.lastname | upper }}</td>
           <td>{{ user.email }}</td>
           <td>{{ user.birthDate | date("d/m/Y") }}</td>
-          <td>{{ user.weight }}</td>
-          <td>
+          <td>{{ user.weight }} kg</td>
+          <td style="display: inherit">
+            <a href="{{ path('show_user', {'id': user.id }) }}" class="show showBtn"><i class="material-icons" data-toggle="tooltip" title="Voir les courses">visibility</i></a>
             <a href="#editEmployeeModal" class="edit editBtn" data-user="{{ entryInfo | json_encode }}" data-path="{{ path('edit_user', {'id': user.id }) }}"
                data-toggle="modal"><i class="material-icons"
                data-toggle="tooltip"
-               title="Edit">&#xE254;</i></a>
+               title="Editer">&#xE254;</i></a>
             <a href="#deleteEmployeeModal" class="delete deleteBtn" data-path="{{ path('delete_user', {'id': user.id }) }}"
                data-toggle="modal"><i class="material-icons"
-               data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+               data-toggle="tooltip" title="Supprimer">&#xE872;</i></a>
           </td>
         </tr>
         {% endfor %}
@@ -212,7 +209,7 @@
         let user = $(this).attr('data-user')
         let parsed = JSON.parse(user)
         let date = new Date(parsed.birthDate.date)
-        date = date.getFullYear() + "-" + "0" + (date.getMonth() + 1) + "-" + date.getDate()
+        date = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()
 
         $('.edit-firstname').attr('value', parsed.firstname)
         $('.edit-lastname').attr('value', parsed.lastname)
@@ -222,9 +219,13 @@
 
 			})
 
-			$(".edit-date").focus( function() {
-				$(this).attr({type: 'date'});
-			});
+      $(".showBtn").click(function () {
+        console.log('hey')
+			})
+
+			// $(".edit-date").focus( function() {
+			// 	$(this).attr({type: 'date'});
+			// });
 		})
   </script>
 
