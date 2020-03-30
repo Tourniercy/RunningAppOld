@@ -1,0 +1,17 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="height: 90px">
+  <img src="{{ asset('icons.png') }}" alt="" width="70px" class="mx-2 mr-3">
+  <a class="navbar-brand" style="color: #566787; font-size: 30px; font-weight: bold" href="#">Running</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav ml-3 mt-1">
+      <li class="nav-item">
+        <a class="nav-link" href="{{ path('users') }}" style="font-size: 15px">Gérer les utilisateurs</a>
+      </li>
+      <li class="nav-item ml-2">
+        <a class="nav-link" href="{{ path('courses') }}" style="font-size: 15px">Gérer les courses</a>
+      </li>
+    </ul>
+  </div>
+</nav>

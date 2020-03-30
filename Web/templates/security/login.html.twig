@@ -4,13 +4,13 @@
 
 {% block body %}
 
-  <div class="mt-5 d-flex justify-content-center align-items-center flex-column">
+  <div class="mt-5 mb-5 d-flex justify-content-center align-items-center flex-column">
 
     <form method="post" class="d-flex justify-content-center align-items-center flex-column">
 
-      <h1 class="mb-3 font-weight-bold text-white">Running</h1>
-      <h5 class="mb-1 font-weight-normal text-white">Connexion</h5>
-
+      <img src="{{ asset('icons.png') }}" width="100px" alt="">
+      <h1 class="mb-3 mt-4 font-weight-bold text-white">Running</h1>
+{#      <h5 class="mb-1 font-weight-normal text-white">Connexion</h5>#}
       {% if error %}
         <div class="alert alert-danger mt-3">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
       {% endif %}
@@ -55,7 +55,8 @@
         <div class="mb-3 mt-5">
           <p class="text-white">Vous êtes connectés en tant que <b>{{ app.user.username }}</b></p>
           <div class="d-flex justify-content-center">
-            <a class="btn btn-primary w-50 mw-50 text-center" href="{{ path('app_logout') }}">Déconnexion</a>
+            <a class="btn btn-primary w-50 mw-50 mr-5 text-center" href="{{ path('users') }}">Entrer</a>
+            <a class="btn btn-danger w-50 mw-50 text-center" href="{{ path('app_logout') }}">Se déconnecter</a>
           </div>
         </div>
       {% endif %}

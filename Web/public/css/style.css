@@ -8,3 +8,7 @@ body {
     width: 25rem;
     border-radius: 10px;
 }
+
+.navbar {
+    background: white !important;
+}

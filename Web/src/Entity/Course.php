@@ -133,6 +133,7 @@ class Course
         return $this;
     }
 
+
     public function getCreatedAt(): ?\DateTime
     {
       return $this->createdAt;

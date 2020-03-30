@@ -43,8 +43,8 @@ security:
                     - App\Security\LoginFormAuthenticator
 
             form_login:
-                login_path: login
-                check_path: login
+                login_path: app_login
+                check_path: app_login
                 provider: app_user_provider
 
             logout:
@@ -53,8 +53,10 @@ security:
 
 
     access_control:
-         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+#         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
          - { path: ^/api/users, roles: IS_AUTHENTICATED_FULLY }
          - { path: ^/api/courses, roles: IS_AUTHENTICATED_FULLY }
          - { path: ^/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
          - { path: ^/api, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/users, roles: IS_AUTHENTICATED_FULLY }
