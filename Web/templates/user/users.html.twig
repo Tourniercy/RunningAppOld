@@ -134,7 +134,7 @@
             </div>
             <div class="form-group">
               <label>Date de naissance</label>
-              <input type="date" class="form-control edit-date" required name="birthDate">
+              <input type="text" class="form-control edit-date" required name="birthDate">
             </div>
             <div class="form-group">
               <label>Poids</label>
@@ -219,13 +219,9 @@
 
 			})
 
-      $(".showBtn").click(function () {
-        console.log('hey')
-			})
-
-			// $(".edit-date").focus( function() {
-			// 	$(this).attr({type: 'date'});
-			// });
+			$(".edit-date").focus( function() {
+				$(this).attr({type: 'date'});
+			});
 		})
   </script>
 
