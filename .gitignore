@@ -4,3 +4,4 @@ App/node_modules
 App/.expo
 package-lock.json
 .DS_Storecd
+Web/.php-version

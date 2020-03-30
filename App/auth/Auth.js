@@ -1,4 +1,4 @@
-import { AsyncStorage } from "react-native";
+import {AsyncStorage} from "react-native";
 import config from '../config/config';
 
 let USER_TOKEN = "";
@@ -6,64 +6,60 @@ let USER_REFRESH_TOKEN = "";
 let USER_ID = "";
 
 export async function getToken(values) {
+  console.log(config);
+  return await
 
-  let token = await
-
-    fetch(``+config.API_URL+`/api/login_check`, {
-
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        "username": values.email,
-        "password": values.password,
-      })
-    })
-    .then(async resp => {
-
-        return resp.json()
-    })
-    .then(async responseData => {
-
-      if (responseData.token) {
-        let id = await fetch(``+config.API_URL+`/users/check/` + values.email, {
+      fetch(`` + config.API_URL + `/api/login_check`, {
 
           method: 'POST',
           headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          }
-        })
-        .then(async resp => {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+              "username": values.email,
+              "password": values.password,
+          })
+      })
+          .then(async resp => {
 
-          return resp.json()
-        })
-        .then(async responseData => {
-          return responseData.id
-        })
+              return resp.json()
+          })
+          .then(async responseData => {
 
-        USER_ID = await id
-        USER_TOKEN = await responseData.token
-        USER_REFRESH_TOKEN = await responseData.refresh_token
+              if (responseData.token) {
+                  let id = await fetch(`` + config.API_URL + `/users/check/` + values.email, {
 
-        await onSignIn()
-        return 200
-      }
-      else if (responseData.code === 401) {
-        return 401
-      }
-      else if (responseData.code === 500) {
-        return 500
-      }
+                      method: 'POST',
+                      headers: {
+                          Accept: 'application/json',
+                          'Content-Type': 'application/json',
+                      }
+                  })
+                      .then(async resp => {
 
-    })
-    .catch(err => {
-      console.log(err)
-    })
+                          return resp.json()
+                      })
+                      .then(async responseData => {
+                          return responseData.id
+                      })
 
-  return token
+                  USER_ID = await id
+                  USER_TOKEN = await responseData.token
+                  USER_REFRESH_TOKEN = await responseData.refresh_token
+
+                  await onSignIn()
+                  return 200
+              } else if (responseData.code === 401) {
+                  return 401
+              } else if (responseData.code === 500) {
+                  return 500
+              }
+
+          })
+          .catch(err => {
+              console.log(err)
+          })
 }
 
 export const onSignIn = async () => {

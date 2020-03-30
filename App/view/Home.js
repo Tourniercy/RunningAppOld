@@ -10,7 +10,11 @@ import { Stopwatch } from 'react-native-stopwatch-timer';
 import SafeAreaView from 'react-native-safe-area-view';
 import * as geolib from 'geolib';
 import config from "../config/config";
+import { SCLAlert, SCLAlertButton } from 'react-native-scl-alert'
 import {onSignIn} from "../auth/Auth";
+import {Ionicons} from "@expo/vector-icons";
+import moment from "moment";
+
 
 const STORAGE_KEY_COORDINATES = 'COORDINATES';
 const STORAGE_KEY_STATS = 'STATS';
@@ -28,6 +32,7 @@ export default class Home extends Component {
         super(props);
 
         this.state = {
+            show: false,
             timestampStart:0,
             stopwatchStart: false,
             stopwatchReset: false,
@@ -152,38 +157,39 @@ export default class Home extends Component {
                     },
 
                 }]
-            // this.refs.viewShot.capture().then(uri => {
-            //     // console.log(uri);
-            // });
             dataStats[0].coordinates = dataCoordinates;
             const getUserToken = await Home.getData("token");
-            console.log(getUserToken);
-            fetch(``+config.API_URL+`/api/courses`, {
+            const d = new Date(dataCoordinates[0].timestamp);
+            let time = moment(d).add("2","hours");
+            time = moment(time).format("YYYY:MM:DD HH:mm:ss");
 
+            await fetch(`` + config.API_URL + `/api/courses`, {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer '+getUserToken
+                    'Authorization': 'Bearer ' + getUserToken
                 },
                 body: JSON.stringify({
-                    "distance": 0,
-                    "avgSpeed": 0,
-                    "maxSpeed": 0,
-                    "time":'15:26:00',
-                    "createdAt": "2020-03-29T15:26:33.386Z",
-                    "coordinates": [
-                        "10"
-                    ],
+                    "distance": dataStats[0].distance,
+                    "avgSpeed": parseFloat(dataStats[0].avgSpeed),
+                    "maxSpeed":parseFloat(dataStats[0].maxSpeed),
+                    "time":new Date(dataStats[0].totaltime * 1000).toISOString().substr(11, 8),
+                    "createdAt": time,
+                    "coordinates": dataCoordinates,
                     "user": "/api/users/1"
                 })
-            })
-                .then(async resp => {
-                    console.log(resp);
-                    return resp.json()
-                }).then(async responseData => {
-                    console.log(responseData);
-                    return 200
+            }).then((response) => response.json())
+                .then((json) => {
+                    console.log(json);
+                    if (json.id) {
+                        this.setState({ show:true })
+                        setTimeout(() => {
+                            this.setState({ show:false })
+                        }, 2000)
+                    }
+                }).catch(err => {
+                    console.log(err)
                 })
 
 
@@ -191,7 +197,6 @@ export default class Home extends Component {
 
             await AsyncStorage.removeItem(STORAGE_KEY_COORDINATES);
             await AsyncStorage.removeItem(STORAGE_KEY_STATS);
-            console.log('Stop!');
         }
     };
     onPanDrag = async (coordinate) => {
@@ -201,6 +206,10 @@ export default class Home extends Component {
         let location = await Location.getLastKnownPositionAsync();
         this.setState({location: location,dragged: false,centered:true});
     };
+
+    handleClose = () => {
+        this.setState({ show: false })
+    }
 
     render() {
         let {toggle} = this.state;
@@ -241,6 +250,16 @@ export default class Home extends Component {
         }
         return (
             <SafeAreaView style={{ flex: 1}} forceInset={{ top: 'always' }}>
+                <SCLAlert
+                    show={this.state.show}
+                    onRequestClose={this.handleClose}
+                    theme="success"
+                    subtitle={""}
+                    title={"Course sauvegardée !"}
+                    headerIconComponent={<Ionicons name="ios-checkmark" size={70} color="white"/>}
+                    titleStyle={{fontSize: 30}}
+                    subtitleStyle={{fontSize: 18}}
+                />
                 <View style={{flex:1}}>
                     <View style={{flex:1,backgroundColor:'white', padding: 10, paddingBottom: 20}}>
                         <View style={{flex: 1, flexDirection: 'row',alignContent:'stretch',justifyContent:'center',alignItems: 'stretch',paddingTop:10}}>
@@ -291,7 +310,6 @@ export default class Home extends Component {
                                 key = {index}
                                 coordinate={marker.coordinates}
                                 title={marker.title}
-                                image={marker.image}
                             />
                         ))}
                         <Polyline
@@ -382,18 +400,21 @@ if (!TaskManager.isTaskDefined('GetLocation')) {
                 //     speed:(data.locations[data.locations.length-1].coords.speed*3.6).toFixed(2)})
 
                 if (pastStats == null) {
-                    let Stats= [{distance:distance,avgSpeed:(data.locations[data.locations.length-1].coords.speed).toFixed(2),speed:(data.locations[data.locations.length-1].coords.speed).toFixed(2),maxpseed:(data.locations[data.locations.length-1].coords.speed).toFixed(2),totaltime:TotalTime}]
+                    let Stats= [{distance:distance,avgSpeed:(data.locations[data.locations.length-1].coords.speed).toFixed(2),speed:((data.locations[data.locations.length-1].coords.speed)*3.6).toFixed(2),maxpSpeed:((data.locations[data.locations.length-1].coords.speed)*3.6).toFixed(2),totaltime:TotalTime}]
                     await Home.setData(STORAGE_KEY_STATS, JSON.stringify(Stats));
                 } else {
                     let pastStatsParsed = JSON.parse(pastStats);
                     // console.log('pastStatsParsed',pastStatsParsed)
                     let maxSpeed = 0;
-                    if (data.locations[data.locations.length-1].coords.speed.toFixed(2) > pastStatsParsed[0].maxSpeed) {
+                    if (data.locations[data.locations.length-1].coords.speed > pastStatsParsed[0].maxSpeed) {
                         maxSpeed = data.locations[data.locations.length-1].coords.speed.toFixed(2);
                     } else {
                         maxSpeed = pastStatsParsed[0].speed;
                     }
-                    let CurrentStats= [{distance:pastStatsParsed[0].distance+distance,avgSpeed:(((pastStatsParsed[0].distance+distance)/TotalTime)*3.6).toFixed(2),maxSpeed:maxSpeed,speed:(data.locations[data.locations.length-1].coords.speed).toFixed(2),totaltime:TotalTime},]
+                    console.log('time',TotalTime);
+                    console.log('distance',pastStatsParsed[0].distance+distance);
+                    console.log('speed',data.locations[data.locations.length-1].coords.speed);
+                    let CurrentStats= [{distance:pastStatsParsed[0].distance+distance,avgSpeed:(((pastStatsParsed[0].distance+distance)/TotalTime)*3.6).toFixed(2),maxSpeed:maxSpeed*3.6,speed:(data.locations[data.locations.length-1].coords.speed).toFixed(2),totaltime:TotalTime},]
                     await Home.setData(STORAGE_KEY_STATS, JSON.stringify(CurrentStats));
                 }
                 await Home.setData(STORAGE_KEY_COORDINATES,JSON.stringify(JSON.parse(pastCoordinates).concat(currentCoordinates)));
