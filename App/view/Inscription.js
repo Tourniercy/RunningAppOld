@@ -199,11 +199,11 @@ export class Inscription extends Component {
 						theme="info"
 						title={"Félicitations" + ' ' + this.state.user}
 						subtitle="Vous avez été inscrit avec succès !"
-						headerIconComponent={<Ionicons name="ios-checkmark" size={70} color="white" />}
-						overlayStyle={{ backgroundColor: 'white' }}
-						titleStyle={{ fontSize: 30 }}
-						subtitleStyle={{ fontSize: 18}}
-					></SCLAlert>
+						headerIconComponent={<Ionicons name="ios-checkmark" size={70} color="white"/>}
+						overlayStyle={{backgroundColor: 'white'}}
+						titleStyle={{fontSize: 30}}
+						subtitleStyle={{fontSize: 18}}
+					/>
 
 				</View>
 
