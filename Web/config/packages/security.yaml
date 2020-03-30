@@ -60,3 +60,6 @@ security:
          - { path: ^/api, roles: IS_AUTHENTICATED_ANONYMOUSLY }
          - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
          - { path: ^/users, roles: IS_AUTHENTICATED_FULLY }
+         - { path: ^/courses, roles: IS_AUTHENTICATED_FULLY }
+         - { path: ^/delete, roles: IS_AUTHENTICATED_FULLY }
+         - { path: ^/edit, roles: IS_AUTHENTICATED_FULLY }
