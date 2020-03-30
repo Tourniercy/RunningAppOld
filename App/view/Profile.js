@@ -35,7 +35,7 @@ class DetailProfile extends React.Component {
     render() {
         const fill = '#2C5077'
         const data = [ 4, 30, 10, 7, 4, 6, 8, 4, 10, 10, 10, 10 ]
-        const dates = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ]
+        const dates = [ 'J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D' ]
 
 
         const saveDatas = async () => {

@@ -6,6 +6,7 @@ import { Button } from 'react-native-elements';
 import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
+import { Notifications } from 'expo';
 import { Stopwatch } from 'react-native-stopwatch-timer';
 import SafeAreaView from 'react-native-safe-area-view';
 import * as geolib from 'geolib';
@@ -70,6 +71,7 @@ export default class Home extends Component {
         await AsyncStorage.removeItem(STORAGE_KEY_COORDINATES);
         await AsyncStorage.removeItem(STORAGE_KEY_STATS);
         AppState.addEventListener('change', this._handleAppStateChange);
+        this.getNotifPermissions();
         this.findCurrentLocationAsync().then(() => {
             if (this.state.location)  {
                 this.setState({canStart : true});
@@ -95,6 +97,16 @@ export default class Home extends Component {
     componentWillUnmount() {
         AppState.removeEventListener('change', this._handleAppStateChange);
     }
+
+
+    getNotifPermissions = async () => {
+        const { status } = await Permissions.getAsync(
+            Permissions.NOTIFICATIONS
+        );
+        if (status !== 'granted') {
+            await Permissions.askAsync(Permissions.NOTIFICATIONS);
+        }
+    };
     findCurrentLocationAsync = async () => {
         let { status } = await Permissions.askAsync(Permissions.LOCATION);
         if (status !== 'granted') {
@@ -161,8 +173,14 @@ export default class Home extends Component {
             const getUserToken = await Home.getData("token");
             const d = new Date(dataCoordinates[0].timestamp);
             let time = moment(d).add("2","hours");
-            time = moment(time).format("YYYY:MM:DD HH:mm:ss");
-
+            time = moment(time).format("YYYY:MM:DD hh:mm:ss");
+            const localnotification = {
+                title: 'Course terminée',
+                body: 'Durée : '+new Date(dataStats[0].totaltime * 1000).toISOString().substr(11, 8)+'    Distance : '+(dataStats[0].distance/1000).toFixed(2)+' KM',
+                android: {
+                    sound: true,
+                },
+            };
             await fetch(`` + config.API_URL + `/api/courses`, {
                 method: 'POST',
                 headers: {
@@ -184,6 +202,7 @@ export default class Home extends Component {
                     console.log(json);
                     if (json.id) {
                         this.setState({ show:true })
+                        Notifications.presentLocalNotificationAsync(localnotification)
                         setTimeout(() => {
                             this.setState({ show:false })
                         }, 2000)
