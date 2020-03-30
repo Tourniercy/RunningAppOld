@@ -1,15 +1,20 @@
 import React, {Component} from 'react';
 import {NavigationEvents, ScrollView} from "react-navigation";
-import {Text, TextInput, View, Dimensions} from "react-native";
+import {Text, TextInput, View, Dimensions, AsyncStorage} from "react-native";
 import {Button, Avatar, Divider} from "react-native-elements";
 import { BarChart, Grid,XAxis, YAxis, LineChart } from 'react-native-svg-charts'
 import {onSignIn} from "../auth/Auth";
 import {createStackNavigator} from "@react-navigation/stack";
 import {NavigationContainer} from "@react-navigation/native";
+import config from "../config/config";
+import * as Location from "expo-location";
 
 
 class DetailProfile extends React.Component {
 
+    static getData = async (key) => {
+        return await AsyncStorage.getItem(key);
+    };
     constructor(props) {
         super(props);
 
@@ -26,17 +31,34 @@ class DetailProfile extends React.Component {
         };
 
     }
-
-    componentDidMount() {
-        // TODO appel BDD
-        // TODO transformer datausers en temp-datas
+    _onPressDis = async () => {
+        await AsyncStorage.removeItem('token');
+    };
+    componentDidMount = async () => {
+        const getUserToken = await DetailProfile.getData("token");
+        console.log(getUserToken);
+        await fetch(`` + config.API_URL + `/api/user`, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + getUserToken
+            }
+        }).then((response) => response.json())
+            .then((json) => {
+                console.log(json[0]);
+                if (json) {
+                    this.setState({data: json});
+                }
+            }).catch(err => {
+                console.log(err)
+            })
     }
 
     render() {
         const fill = '#2C5077'
         const data = [ 4, 30, 10, 7, 4, 6, 8, 4, 10, 10, 10, 10 ]
         const dates = [ 'J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D' ]
-
 
         const saveDatas = async () => {
             console.log(this.state.tempnom, this.state.tempprenom, this.state.temppoids, this.state.tempadresseMail, this.state.tempmdp)
@@ -68,9 +90,7 @@ class DetailProfile extends React.Component {
                         type="solid"
                         color="#2C5077"
                         // onPress={handleSubmit}
-                        onPress={() => {
-                            this.forceUpdate();
-                        }}
+                        onPress={this._onPressDis}
                     />
 
                     <Divider style={{ backgroundColor: 'black', marginTop:20 }} />

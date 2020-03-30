@@ -48,11 +48,20 @@ class UserController extends AbstractController
       $dates += strtotime($i->getTime()->format('H:i:s'));
     }
 
+    if (count($courses) !== 0)    {
     $avgDistance = $distances / count($courses);
-    $avgSpeeds = $speeds / count($courses);
-    $maxAvgSpeeds = $maxSpeeds / count($courses);
-    $avgTimes = $dates / count($courses);
-    $avgTime = date('H:i:s', $avgTimes);
+        $avgSpeeds = $speeds / count($courses);
+        $maxAvgSpeeds = $maxSpeeds / count($courses);
+        $avgTimes = $dates / count($courses);
+        $avgTime = date('H:i:s', $avgTimes);
+    } else {
+    $avgDistance = 0;
+    $avgSpeeds = 0;
+            $maxAvgSpeeds = 0;
+            $avgTimes = 0;
+            $avgTime = 0;
+    }
+
 
 //    dump(date('H:i:s', $avgTime));
 //    die();
