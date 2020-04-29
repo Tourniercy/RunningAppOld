@@ -91,7 +91,7 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * @Route("/users/check/{email}", name="email_check", requirements={"email"="^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$"})
+     * @Route("/user/check/{email}", name="email_check", requirements={"email"="^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$"})
      */
     public function emailCheck(Request $request)
     {
@@ -112,4 +112,31 @@ class SecurityController extends AbstractController
 
         return $response;
     }
+    /**
+    * @Route("/api/users/{id}/courses", name="user_courses")
+    */
+        public function getUserCourses(Request $request)
+        {
+          $user = $this->getDoctrine()->getRepository(User::class)
+            ->find($request->attributes->get('id'));
+
+          if (!$user) {
+            return new Response('', Response::HTTP_NOT_FOUND);
+          }
+
+          $courses = $user->getCourses();
+          $array = [];
+          foreach ($courses as $course) {
+                array_push($array,$course);
+          }
+
+          $response = new Response();
+          $response->setContent(json_encode([
+            'courses' => $courses,
+          ]));
+          $response->headers->set('Content-Type', 'application/json');
+          $response->setStatusCode(302);
+
+          return $response;
+        }
 }

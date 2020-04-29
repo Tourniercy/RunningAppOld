@@ -16,7 +16,6 @@ export const SaveCourse = async () => {
     await AsyncStorage.setItem(STORAGE_KEY_COORDINATES,'JSON.stringify(currentCoordinates)');
     const dataFetch = async () => await AsyncStorage.getItem(STORAGE_KEY_COORDINATES);
     // const dataStats = async () => await AsyncStorage.getItem(STORAGE_KEY_STATS);
-    console.log(dataFetch);
         return(
             <View>
                 <ViewShot ref="viewShot" options={{ format: "jpg", quality: 0.9,result:"base64" }} style={{flex:4}}>

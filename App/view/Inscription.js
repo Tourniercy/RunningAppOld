@@ -32,7 +32,7 @@ export class Inscription extends Component {
 
 		this.setState({loading: true})
 
-		fetch(`/users/check/`+ values.email, {
+		fetch(``+config.API_URL+`/user/check/`+ values.email, {
 
 			method: 'POST',
 			headers: {
@@ -279,13 +279,13 @@ export class Inscription extends Component {
 						<Formik
 
 							initialValues={{
-								email: '',
-								prenom: '',
-								nom: '',
-								password: '',
-								passwordVerify: '',
-								birthDate: '',
-								poids: '',
+								email: 'demo@demo.com',
+								prenom: 'Demo',
+								nom: 'Ch',
+								password: 'azerty',
+								passwordVerify: 'azerty',
+								birthDate: '2020/10/10',
+								poids: '20',
 							}}
 
 							onSubmit={values => this.emailCheck(values)}

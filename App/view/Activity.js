@@ -30,6 +30,7 @@ class ActivityScreen extends React.Component {
 
     }
     componentDidMount = async () => {
+        const getUserId = await ActivityScreen.getData("user_id");
         const getUserToken = await ActivityScreen.getData("token");
         await fetch(`` + config.API_URL + `/api/courses`, {
             method: 'GET',
@@ -40,9 +41,14 @@ class ActivityScreen extends React.Component {
             }
         }).then((response) => response.json())
             .then((json) => {
-                console.log(json[0]);
                 if (json) {
-                    this.setState({data: json});
+                    let array=[];
+                    for (let item in json) {
+                        if(json[item].user === "/api/users/"+getUserId) {
+                            array.push(json[item]);
+                        }
+                    }
+                    this.setState({data: array});
                 }
             }).catch(err => {
                 console.log(err)
@@ -52,6 +58,7 @@ class ActivityScreen extends React.Component {
 
     refreshCourses = async () => {
         const dataDumpCourses = async () => {
+            const getUserId = await ActivityScreen.getData("user_id");
             const getUserToken = await ActivityScreen.getData("token");
             await fetch(`` + config.API_URL + `/api/courses`, {
                 method: 'GET',
@@ -63,7 +70,13 @@ class ActivityScreen extends React.Component {
             }).then((response) => response.json())
                 .then((json) => {
                     if (json) {
-                        this.setState({data: json});
+                        let array=[];
+                        for (let item in json) {
+                            if(json[item].user === "/api/users/"+getUserId) {
+                                array.push(json[item]);
+                            }
+                        }
+                        this.setState({data: array});
                     }
                 }).catch(err => {
                     console.log(err)

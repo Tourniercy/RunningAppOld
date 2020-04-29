@@ -26,8 +26,7 @@ export async function getToken(values) {
             })
             .then(async responseData => {
                 if (responseData.token) {
-                    console.log('token',responseData.token)
-                    let id = await fetch(``+config.API_URL+`/users/check/` + values.email, {
+                    let id = await fetch(``+config.API_URL+`/user/check/` + values.email, {
 
                         method: 'POST',
                         headers: {
@@ -40,7 +39,6 @@ export async function getToken(values) {
                             return resp.json()
                         })
                         .then(async responseData => {
-                            console.log(responseData);
                             return responseData.id
                         })
 
@@ -79,9 +77,10 @@ export async function getUserId() {
 export async function getUserToken() {
     return await AsyncStorage.getItem("token")
 }
-
-export const onSignOut = () => AsyncStorage.removeItem("token");
-
+export const onSignOut = async () => {
+    await AsyncStorage.removeItem("user_id");
+    await AsyncStorage.removeItem("token");
+}
 export const isSignedIn = () => {
 
     return new Promise((resolve, reject) => {

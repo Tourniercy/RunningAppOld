@@ -12,7 +12,6 @@ import SafeAreaView from 'react-native-safe-area-view';
 import * as geolib from 'geolib';
 import config from "../config/config";
 import { SCLAlert, SCLAlertButton } from 'react-native-scl-alert'
-import {onSignIn} from "../auth/Auth";
 import {Ionicons} from "@expo/vector-icons";
 import moment from "moment";
 
@@ -171,6 +170,7 @@ export default class Home extends Component {
                 }]
             dataStats[0].coordinates = dataCoordinates;
             const getUserToken = await Home.getData("token");
+            const getUserId = await Home.getData("user_id");
             const d = new Date(dataCoordinates[0].timestamp);
             let time = moment(d).add("2","hours");
             time = moment(time).format("YYYY:MM:DD hh:mm:ss");
@@ -195,7 +195,7 @@ export default class Home extends Component {
                     "time":new Date(dataStats[0].totaltime * 1000).toISOString().substr(11, 8),
                     "createdAt": time,
                     "coordinates": dataCoordinates,
-                    "user": "/api/users/1"
+                    "user": "/api/users/"+getUserId
                 })
             }).then((response) => response.json())
                 .then((json) => {

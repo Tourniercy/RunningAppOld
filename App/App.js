@@ -5,7 +5,7 @@ import { isSignedIn } from "./auth/Auth";
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 
-
+console.disableYellowBox = true;
 export default class App extends Component {
     constructor(props) {
         super(props);
