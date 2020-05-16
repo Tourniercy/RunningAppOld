@@ -9,8 +9,18 @@ npm install
 
 npm start
 ```
-## Screenshot
+## Screenshots
 
-![alt-text-1](https://raw.githubusercontent.com/Tourniercy/RunningApp/master/capture.png "title-1") ![alt-text-2](https://raw.githubusercontent.com/Tourniercy/RunningApp/master/capture.png "title-2")
+Sauvegarde d'une course             |  Notification
+:-------------------------:|:-------------------------:
+![](https://raw.githubusercontent.com/Tourniercy/RunningApp/master/capture.png)  |  ![](https://raw.githubusercontent.com/Tourniercy/RunningApp/master/capture1.png)
+
+
+
+Liste des courses           |  Statistique d'une course
+:-------------------------:|:-------------------------:
+![](https://raw.githubusercontent.com/Tourniercy/RunningApp/master/capture2.png)  |  ![](https://raw.githubusercontent.com/Tourniercy/RunningApp/master/capture3.png)
+
+
 
 
